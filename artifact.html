@@ -3858,6 +3858,166 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
   ]
 });
 </script>
+<script>/* 문법 단원 이해 점검 문제. 단원의 설명·예문에서 가르친 규칙만 묻는다(새 규칙을 추가하지 않음).
+   작성: Claude(AI) — 교재·원어민 검수 전(review: unreviewed). 정답은 작성자가 정했고, 올바른 선택지의 이탈리아어 문장은 자체 문장 검사기를 통과시켰다.
+   단원의 연습 문제(exercises)와 별개라서 단원 완료 판정(60%)에 영향을 주지 않는다. */
+(function () {
+  const Hh = s => { let h = 2166136261; for (const c of s) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return h >>> 0; };
+  const Q = (id, q, right, wrong, why) => {
+    const opts = [right].concat(wrong), order = opts.map((_, i) => i).sort((a, b) => Hh(id + ':' + a) - Hh(id + ':' + b)), options = order.map(i => opts[i]);
+    return { id, type: 'mcq', check: true, q, options, answer: options.indexOf(right), why };
+  };
+  const TF = (id, stmt, truth, why) => ({ id, type: 'mcq', check: true, q: '다음 설명이 맞는지 고르세요. — ' + stmt, options: ['맞는 설명', '틀린 설명'], answer: truth ? 0 : 1, why });
+  const A1 = {
+    u01: [
+      Q('c-u01-1', '친구나 또래에게 "너"라고 말할 때 쓰는 주어 대명사는?', 'tu', ['Lei', 'voi', 'lui'], 'tu는 친한 사이의 "너", Lei는 존칭 "당신", voi는 "너희"예요.'),
+      Q('c-u01-2', '존칭 Lei(당신)에게 말할 때 동사는 어떤 형태를 쓸까요?', '3인칭 단수(lei) 형태', ['2인칭 단수(tu) 형태', '1인칭 복수(noi) 형태', '3인칭 복수(loro) 형태'], '존칭 Lei는 3인칭 단수 동사 형태를 써요.'),
+      TF('c-u01-3', 'Parlo italiano.는 주어 io가 없어서 틀린 문장이다.', false, '동사 어미 -o가 io를 알려 주기 때문에 주어를 생략하는 것이 자연스러워요.'),
+      Q('c-u01-4', '주어 대명사를 일부러 쓰는 것이 가장 자연스러운 경우는?', '나와 너를 대비할 때 (Io parlo, tu no.)', ['동사가 현재형일 때 항상', '문장이 짧을 때', '질문을 할 때'], '강조하거나 대비할 때만 주어를 써요.'),
+      Q('c-u01-5', '"우리는 한국 사람이에요."를 주어 없이 쓴 올바른 문장은?', 'Siamo coreani.', ['Sono coreani.', 'Siete coreani.', 'Sei coreani.'], 'siamo는 noi의 essere 형태라 주어를 생략해도 "우리"임을 알 수 있어요.'),
+      Q('c-u01-6', '"너희"를 뜻하는 주어 대명사는?', 'voi', ['noi', 'loro', 'lei'], 'noi = 우리, voi = 너희, loro = 그들이에요.'),
+      Q('c-u01-7', '다음 중 틀린 설명은?', 'Lei(존칭)는 2인칭 복수 동사와 함께 쓴다.', ['io는 1인칭 단수다.', 'lui는 남성 3인칭 단수다.', 'voi는 "너희"다.'], '존칭 Lei는 3인칭 단수 동사와 써요.')],
+    u02: [
+      Q('c-u02-1', '"나는 스무 살이에요."를 올바르게 말한 것은?', 'Ho venti anni.', ['Sono venti anni.', 'Sto venti anni.', 'Ho venti anno.'], '나이는 essere가 아니라 avere로 말해요.'),
+      Q('c-u02-2', 'essere를 써서 말하는 것은?', '국적 (Sono coreano.)', ['배고픔', '목마름', '나이'], '국적·직업·상태는 essere, 배고픔·목마름·나이는 avere예요.'),
+      TF('c-u02-3', 'Ho fame.의 ho는 essere의 활용형이다.', false, 'ho는 avere의 io 형태예요.'),
+      Q('c-u02-4', 'Tu ___ stanco. (너는 피곤해.)', 'sei', ['hai', 'è', 'sono'], 'tu + essere = sei'),
+      Q('c-u02-5', 'Loro ___ due figli. (그들은 아이가 둘 있어요.)', 'hanno', ['sono', 'ha', 'abbiamo'], 'loro + avere = hanno'),
+      Q('c-u02-6', '다음 중 틀린 문장은?', 'Sono fame.', ['Ho sete.', 'Mia sorella ha dieci anni.', 'Siamo a casa.'], '배고픔은 avere로 말해요: Ho fame.'),
+      Q('c-u02-7', 'essere의 3인칭 단수(lui)와 3인칭 복수(loro) 형태가 바르게 짝지어진 것은?', 'è / sono', ['ha / hanno', 'sei / siete', 'sono / è'], 'lui è, loro sono'),
+      Q('c-u02-8', 'Noi ___ a casa. (우리는 집에 있어요.)', 'siamo', ['abbiamo', 'siete', 'sono'], 'noi + essere = siamo')],
+    u03: [
+      Q('c-u03-1', 'parlare의 noi 형태는?', 'parliamo', ['parlamo', 'parlaiamo', 'parlamiamo'], 'parl- + -iamo'),
+      Q('c-u03-2', 'leggere의 tu 형태는?', 'leggi', ['leggo', 'legge', 'leggete'], 'tu 어미는 -i'),
+      Q('c-u03-3', 'dormire의 loro 형태는?', 'dormono', ['dormiscono', 'dorme', 'dormiamo'], 'dormire는 -isc-가 들어가지 않는 유형이에요.'),
+      Q('c-u03-4', 'capire의 io 형태는?', 'capisco', ['capo', 'capio', 'cape'], 'capire는 io에서 -isc-가 들어가요.'),
+      Q('c-u03-5', '현재형에서 -isc-가 들어가는 동사는?', 'finire', ['dormire', 'aprire', 'partire'], 'capire, finire, preferire는 -isc- 유형이에요.'),
+      TF('c-u03-6', 'finire의 noi 형태는 finiscamo이다.', false, 'noi와 voi에서는 -isc-가 없어요: finiamo, finite.'),
+      Q('c-u03-7', '규칙동사 현재형은 원형의 무엇을 떼고 어미를 붙이나요?', '-are / -ere / -ire 어미', ['첫 음절', '마지막 글자 하나', '아무것도 떼지 않는다'], '어간 + 사람에 맞는 어미예요.'),
+      Q('c-u03-8', 'Voi ___ la TV. (guardare — 너희는 TV를 봐요.)', 'guardate', ['guardiamo', 'guardano', 'guardi'], 'voi + -are 동사 = -ate')],
+    u04: [
+      Q('c-u04-1', 'fare의 io 형태는?', 'faccio', ['faco', 'fao', 'fazo'], 'faccio, fai, fa, facciamo, fate, fanno'),
+      Q('c-u04-2', 'andare의 noi 형태는?', 'andiamo', ['vadiamo', 'andamo', 'vaniamo'], 'noi와 voi는 원형 어간을 써요: andiamo, andate.'),
+      Q('c-u04-3', 'venire의 io 형태는?', 'vengo', ['vieno', 'venco', 'viengo'], 'vengo, vieni, viene, veniamo, venite, vengono'),
+      Q('c-u04-4', '"커피를 마시고 싶어요."를 올바르게 쓴 것은?', 'Voglio bere un caffè.', ['Voglio bevo un caffè.', 'Voglio a bere un caffè.', 'Voglio che bere un caffè.'], 'volere 뒤에는 동사원형이 와요.'),
+      Q('c-u04-5', 'potere의 lui/lei 형태는?', 'può', ['pote', 'puote', 'possa'], 'posso, puoi, può, possiamo, potete, possono'),
+      Q('c-u04-6', '"저는 공부해야 해요."를 올바르게 쓴 것은?', 'Devo studiare.', ['Dovo studiare.', 'Devo studio.', 'Devi studiare.'], 'dovere + 동사원형, io = devo'),
+      TF('c-u04-7', 'stare의 io 형태는 sto이다.', true, 'sto, stai, sta, stiamo, state, stanno'),
+      Q('c-u04-8', '다음 중 틀린 문장은?', 'Lui vado a casa.', ['Vado a scuola.', 'Vieni con me.', 'Voi andate a casa.'], 'lui의 andare는 va예요(vado는 io).'),
+      Q('c-u04-9', 'Come ___? (너 어떻게 지내?)', 'stai', ['sei', 'hai', 'fai'], '안부를 물을 때는 stare를 써요: Come stai?')],
+    u05: [
+      Q('c-u05-1', 'libro의 복수형은?', 'libri', ['libre', 'libros', 'libra'], '-o → -i'),
+      Q('c-u05-2', 'casa의 복수형은?', 'case', ['casi', 'cases', 'casae'], '-a → -e'),
+      Q('c-u05-3', 'cane의 복수형은?', 'cani', ['canes', 'cana', 'canei'], '-e → -i'),
+      Q('c-u05-4', 'amica의 복수형은?', 'amiche', ['amice', 'amiches', 'amici'], '-ca → -che (발음 [k]를 지키기 위해 h를 넣어요).'),
+      Q('c-u05-5', '복수형이 단수형과 같은 것은?', 'caffè', ['libro', 'casa', 'amico'], '악센트가 있는 단어와 외래어는 그대로예요.'),
+      TF('c-u05-6', 'uovo의 복수형은 uovi이다.', false, '복수는 uova(여성 복수)예요.'),
+      Q('c-u05-7', '-e로 끝나는 명사의 성은 어떻게 알까요?', '단어마다 외운다', ['항상 남성이다', '항상 여성이다', '복수형을 보면 알 수 있다'], 'cane(남성)와 notte(여성)처럼 단어마다 달라요.'),
+      Q('c-u05-8', 'mano(손)의 성은?', '여성', ['남성', '중성', '단어마다 다르다'], 'la mano, le mani — -o로 끝나지만 여성이에요.'),
+      Q('c-u05-9', 'uomo의 복수형은?', 'uomini', ['uomi', 'uomos', 'uomoni'], '불규칙 복수예요.')],
+    u06: [
+      Q('c-u06-1', '정관사 il을 쓰는 것은?', 'il libro', ['il zaino', 'il amico', 'il studente'], 'zaino, studente는 lo, amico는 l\'를 써요.'),
+      Q('c-u06-2', '정관사 lo를 쓰는 것은?', 'lo zaino', ['lo libro', 'lo casa', 'lo cane'], 'z, s+자음, gn, ps 앞의 남성 단수는 lo예요.'),
+      Q('c-u06-3', '모음으로 시작하는 남성 단수 amico 앞에 올 관사는?', "l'", ['il', 'lo', 'la'], "l'amico"),
+      Q('c-u06-4', 'zaino(남성 단수 lo zaino)의 복수 "그 배낭들"은?', 'gli zaini', ['i zaini', 'le zaini', 'il zaini'], 'lo의 복수는 gli예요.'),
+      Q('c-u06-5', '여성 amica(모음 앞) 앞의 부정관사는?', "un'amica", ['un amica', 'uno amica', 'lo amica'], '여성이라 una가 기본이고, 모음 앞에서는 un\'로 줄여요.'),
+      TF('c-u06-6', '부정관사는 복수에도 쓸 수 있다. (un libri)', false, '부정관사는 단수에만 써요.'),
+      Q('c-u06-7', 'il bel libro / lo strano libro에서 관사는 무엇의 첫소리를 보고 고를까요?', '관사 바로 다음 단어', ['명사', '문장의 첫 단어', '동사'], '형용사가 명사 앞에 오면 그 형용사의 첫소리를 봐요.'),
+      Q('c-u06-8', '여성 복수 관사 le를 쓴 올바른 것은?', 'le case', ['le libri', 'le amici', 'le zaini'], 'libri, amici, zaini는 남성이라 i/gli예요.'),
+      Q('c-u06-9', 'studente(남성, lo)의 복수형과 관사는?', 'gli studenti', ['i studenti', 'le studenti', 'lo studenti'], 'lo → gli')],
+    u07: [
+      Q('c-u07-1', 'rosso의 여성 복수형은?', 'rosse', ['rossi', 'rossa', 'rosso'], 'rosso / rossa / rossi / rosse'),
+      Q('c-u07-2', 'grande의 복수형(남·여 공통)은?', 'grandi', ['grande', 'grandes', 'grandia'], '-e형은 남녀 동형이고 복수는 -i예요.'),
+      Q('c-u07-3', '"그 집은 작아요."를 올바르게 쓴 것은?', 'La casa è piccola.', ['La casa è piccolo.', 'La casa è piccoli.', 'La casa è piccole.'], 'casa는 여성 단수 → piccola'),
+      Q('c-u07-4', '"그 책들은 새것이에요."를 올바르게 쓴 것은?', 'I libri sono nuovi.', ['I libri sono nuova.', 'I libri sono nuovo.', 'I libri sono nuove.'], 'libri는 남성 복수 → nuovi'),
+      Q('c-u07-5', '형용사는 보통 어디에 올까요?', '명사 뒤', ['명사 앞', '문장 맨 앞', '동사 앞'], 'una macchina rossa'),
+      TF('c-u07-6', 'blu처럼 성·수에 따라 변하지 않는 색깔 형용사도 있다.', true, 'blu는 변하지 않아요.'),
+      Q('c-u07-7', '"그 사과들은 빨개요."를 올바르게 쓴 것은?', 'Le mele sono rosse.', ['Le mele sono rossi.', 'Le mele sono rosso.', 'Le mele sono rossa.'], 'mele는 여성 복수 → rosse'),
+      Q('c-u07-8', 'una macchina ___ (빨간 자동차)', 'rossa', ['rosso', 'rossi', 'rosse'], 'macchina는 여성 단수'),
+      Q('c-u07-9', '다음 중 틀린 표현은?', 'una casa piccolo', ['un amico italiano', 'una ragazza italiana', 'due libri nuovi'], 'casa는 여성이라 piccola')],
+    u08: [
+      Q('c-u08-1', '"저는 고기를 먹지 않아요."를 올바르게 쓴 것은?', 'Non mangio carne.', ['No mangio carne.', 'Mangio non carne.', 'Mangio carne non.'], 'non은 동사 바로 앞에 와요.'),
+      Q('c-u08-2', '부정어 non은 어디에 올까요?', '동사 바로 앞', ['문장 끝', '주어 앞', '명사 뒤'], 'non + 동사'),
+      Q('c-u08-3', '이탈리아어 의문문은 어떻게 만들까요?', '평서문 어순 그대로, 억양을 올린다(글에서는 물음표)', ['동사를 문장 맨 앞으로 옮긴다', 'do 같은 조동사를 넣는다', '반드시 주어를 동사 뒤에 둔다'], 'Studi italiano? 처럼 어순은 그대로예요.'),
+      Q('c-u08-4', '"어디에 살아요?"를 올바르게 쓴 것은?', 'Dove abiti?', ['Quando abiti?', 'Come abiti?', 'Chi abiti?'], 'dove = 어디에'),
+      Q('c-u08-5', '"왜 공부해요?"를 올바르게 쓴 것은?', 'Perché studi?', ['Quando studi?', 'Dove studi?', 'Chi studi?'], 'perché = 왜'),
+      Q('c-u08-6', 'no와 non의 차이는?', 'no는 "아니요"이고, 동사를 부정할 때는 non을 쓴다.', ['둘은 같은 말이다.', 'non은 "아니요"라는 뜻이다.', 'no는 동사 앞에 붙여 쓴다.'], '동사를 부정하는 것은 non이에요.'),
+      TF('c-u08-7', 'Non capisco.는 "이해 못 해요."라는 뜻이다.', true, 'non + capisco'),
+      Q('c-u08-8', '"언제 도착해요?"를 올바르게 쓴 것은?', 'Quando arrivi?', ['Dove arrivi?', 'Come arrivi?', 'Perché arrivi?'], 'quando = 언제'),
+      Q('c-u08-9', '"누구예요?"를 올바르게 쓴 것은?', 'Chi è?', ['Dove è?', 'Quando è?', 'Quanto è?'], 'chi = 누구')],
+    u09: [
+      Q('c-u09-1', '"로마에 가요."를 올바르게 쓴 것은?', 'Vado a Roma.', ['Vado in Roma.', 'Vado di Roma.', 'Vado da Roma.'], '도시 앞에는 a를 써요.'),
+      Q('c-u09-2', '"이탈리아에 살아요."를 올바르게 쓴 것은?', 'Vivo in Italia.', ['Vivo a Italia.', 'Vivo di Italia.', 'Vivo con Italia.'], '나라 앞에는 in을 써요.'),
+      Q('c-u09-3', '"기차로 가요."를 올바르게 쓴 것은?', 'Vado in treno.', ['Vado di treno.', 'Vado su treno.', 'Vado per treno.'], '교통수단 앞에는 in을 써요.'),
+      Q('c-u09-4', 'a + il 은 무엇으로 합쳐질까요?', 'al', ['alla', 'ai', "all'"], 'a + il = al'),
+      Q('c-u09-5', 'a + la 는 무엇으로 합쳐질까요?', 'alla', ['al', 'alle', 'ai'], 'a + la = alla'),
+      Q('c-u09-6', '"시장에 가요."를 올바르게 쓴 것은?', 'Vado al mercato.', ['Vado a il mercato.', 'Vado in mercato.', 'Vado nel mercato.'], 'a + il mercato = al mercato'),
+      Q('c-u09-7', '"마르코의 책"은?', 'il libro di Marco', ['il libro da Marco', 'il libro a Marco', 'il libro con Marco'], 'di는 소유를 나타내요.'),
+      Q('c-u09-8', '"마르코 집에서/마르코네에"에 해당하는 표현은?', 'da Marco', ['di Marco', 'a Marco', 'in Marco'], 'da는 사람의 집이나 가게를 나타내요.'),
+      TF('c-u09-9', 'con은 보통 정관사와 합치지 않고 그대로 쓴다.', true, 'con il, con la처럼 써요.'),
+      Q('c-u09-10', 'in + la 는 무엇으로 합쳐질까요?', 'nella', ['nela', 'inla', 'alla'], 'in + la = nella')],
+    u10: [
+      Q('c-u10-1', '"제 이름은 마르코예요."를 올바르게 쓴 것은?', 'Mi chiamo Marco.', ['Chiamo Marco.', 'Mi chiama Marco.', 'Si chiamo Marco.'], 'chiamarsi: mi chiamo'),
+      Q('c-u10-2', '"이름이 뭐예요?(너)"를 올바르게 쓴 것은?', 'Come ti chiami?', ['Come mi chiami?', 'Come si chiami?', 'Come ti chiama?'], 'tu → ti chiami'),
+      Q('c-u10-3', 'alzarsi의 noi 형태는?', 'ci alziamo', ['si alziamo', 'mi alziamo', 'vi alziamo'], 'noi의 재귀대명사는 ci예요.'),
+      Q('c-u10-4', '현재형에서 재귀대명사는 어디에 올까요?', '동사 앞', ['동사 뒤', '문장 끝', '주어 앞'], 'Mi alzo alle sette.'),
+      Q('c-u10-5', 'passato prossimo에서 재귀동사의 보조동사는?', 'essere', ['avere', '둘 중 아무거나', 'stare'], '재귀동사는 항상 essere를 써요.'),
+      TF('c-u10-6', 'Si sveglia presto.의 주어는 3인칭 단수이다.', true, 'si sveglia = lui/lei'),
+      Q('c-u10-7', 'lavarsi의 tu 형태: ti ___', 'lavi', ['lavo', 'lava', 'laviamo'], 'tu → -i'),
+      Q('c-u10-8', 'vi chiamate의 주어는?', 'voi', ['noi', 'loro', 'tu'], 'vi는 voi의 재귀대명사예요.'),
+      Q('c-u10-9', '"우리는 즐겁게 지내요."를 올바르게 쓴 것은?', 'Ci divertiamo.', ['Si divertiamo.', 'Mi divertiamo.', 'Ci divertono.'], 'noi → ci + divertiamo')],
+    u11: [
+      Q('c-u11-1', 'passato prossimo는 어떻게 만들까요?', '보조동사(avere/essere) 현재형 + 과거분사', ['보조동사 + 동사원형', 'essere + 원형', '과거분사만 쓴다'], 'Ho mangiato, Sono andato'),
+      Q('c-u11-2', 'mangiare의 과거분사는?', 'mangiato', ['mangiuto', 'mangiito', 'mangiate'], '-are → -ato'),
+      Q('c-u11-3', 'vendere의 과거분사는?', 'venduto', ['vendato', 'vendito', 'vendeto'], '-ere → -uto'),
+      Q('c-u11-4', 'fare의 과거분사는?', 'fatto', ['fato', 'faciuto', 'fattato'], '불규칙: fare → fatto'),
+      Q('c-u11-5', '"어제 로마에 갔어요.(남자)"를 올바르게 쓴 것은?', 'Sono andato a Roma ieri.', ['Ho andato a Roma ieri.', 'Sono andare a Roma ieri.', 'Ho andata a Roma ieri.'], 'andare는 essere를 써요.'),
+      Q('c-u11-6', 'essere를 쓸 때 과거분사는 어떻게 될까요?', '주어의 성·수에 맞춘다', ['항상 -o로 쓴다', '항상 복수로 쓴다', '변하지 않는다'], 'Sono andato/andata, Siamo andati/andate'),
+      Q('c-u11-7', '"우리(여자들)는 어제 도착했어요."를 올바르게 쓴 것은?', 'Siamo arrivate ieri.', ['Siamo arrivato ieri.', 'Abbiamo arrivate ieri.', 'Siamo arrivata ieri.'], 'essere + 여성 복수 과거분사'),
+      Q('c-u11-8', '보조동사로 avere를 쓰는 동사는?', 'mangiare', ['andare', 'venire', 'partire'], '이동 동사(andare, venire, partire…)는 essere를 써요.'),
+      Q('c-u11-9', '"어제 책을 한 권 읽었어요."를 올바르게 쓴 것은?', 'Ieri ho letto un libro.', ['Ieri ho leggiuto un libro.', 'Ieri sono letto un libro.', 'Ieri leggo un libro.'], 'leggere → letto (불규칙)'),
+      TF('c-u11-10', 'essere의 과거분사는 stato이다.', true, 'Sono stato a Roma.')],
+    u12: [
+      Q('c-u12-1', '커피를 공손하게 주문하는 말은?', 'Vorrei un caffè.', ['Ho un caffè.', 'Sono un caffè.', 'Faccio un caffè.'], 'Vorrei ~는 공손한 부탁이에요.'),
+      Q('c-u12-2', '"피자를 좋아해요."를 올바르게 쓴 것은?', 'Mi piace la pizza.', ['Mi piacciono la pizza.', 'Mi piaci la pizza.', 'Mi piaccio la pizza.'], '대상이 하나면 piace'),
+      Q('c-u12-3', '"사과를 좋아해요.(여러 개)"를 올바르게 쓴 것은?', 'Mi piacciono le mele.', ['Mi piace le mele.', 'Mi piaciono le mele.', 'Mi piacciono la mela.'], '대상이 여럿이면 piacciono'),
+      Q('c-u12-4', '"책 읽는 것을 좋아해요."를 올바르게 쓴 것은?', 'Mi piace leggere.', ['Mi piacciono leggere.', 'Mi piace leggo.', 'Mi piaccio leggere.'], '동사를 좋아할 때는 mi piace + 원형'),
+      Q('c-u12-5', '"고양이가 한 마리 있어요."를 올바르게 쓴 것은?', "C'è un gatto.", ['Ci sono un gatto.', "C'è due gatti.", 'Ci è un gatto.'], "단수는 c'è"),
+      Q('c-u12-6', '"가게가 많아요."를 올바르게 쓴 것은?', 'Ci sono molti negozi.', ["C'è molti negozi.", 'Ci sono molto negozio.', "C'è molto negozi."], '복수는 ci sono'),
+      Q('c-u12-7', '가격을 묻는 말은?', 'Quanto costa?', ['Come costa?', 'Quando costa?', 'Dove costa?'], 'quanto = 얼마나'),
+      Q('c-u12-8', '"잘 지내요."를 올바르게 쓴 것은?', 'Sto bene.', ['Sono bene.', 'Ho bene.', 'Faccio bene.'], '안부에는 stare를 써요.'),
+      TF('c-u12-9', 'Mi piace에서 "좋아하는 대상"이 문장의 주어 역할을 한다.', true, 'La pizza mi piace.와 같은 구조예요.')]
+  };
+  const A2 = {
+    'a2-u01': [
+      Q('c-a2u01-1', 'Leggo i libri. ___ leggo. (대명사로 바꾸기)', 'Li', ['Lo', 'La', 'Le'], 'i libri는 남성 복수 → li'),
+      Q('c-a2u01-2', 'Prendo la borsa. ___ prendo.', 'La', ['Lo', 'Li', 'Le'], 'la borsa는 여성 단수 → la'),
+      Q('c-a2u01-3', 'Cerco le chiavi. ___ cerco.', 'Le', ['Li', 'La', 'Lo'], 'le chiavi는 여성 복수 → le'),
+      Q('c-a2u01-4', 'Bevo il caffè. ___ bevo.', 'Lo', ['La', 'Li', 'Le'], 'il caffè는 남성 단수 → lo'),
+      Q('c-a2u01-5', '직접목적어 대명사는 동사의 어느 쪽에 올까요?', '동사 앞', ['동사 뒤', '문장 끝', '주어 앞'], 'Lo compro.'),
+      TF('c-a2u01-6', 'Compro lo.는 올바른 문장이다.', false, '대명사는 동사 앞에 와요: Lo compro.'),
+      Q('c-a2u01-7', 'Li vedo.의 li는 무엇을 대신할까요?', '남성 복수 명사', ['남성 단수 명사', '여성 복수 명사', '여성 단수 명사'], 'li = 남성 복수')],
+    'a2-u02': [
+      Q('c-a2u02-1', 'già는 passato prossimo에서 어디에 올까요?', '보조동사와 과거분사 사이', ['과거분사 뒤', '주어 앞', '문장 끝'], 'Ho già mangiato.'),
+      Q('c-a2u02-2', '"아직 안 먹었어요."를 올바르게 쓴 것은?', 'Non ho ancora mangiato.', ['Ho non ancora mangiato.', 'Ho ancora non mangiato.', 'Ho ancora mangiato non.'], 'non은 보조동사 앞, ancora는 보조동사와 과거분사 사이'),
+      Q('c-a2u02-3', '"로마에 한 번도 가 본 적이 없어요.(남자)"를 올바르게 쓴 것은?', 'Non sono mai stato a Roma.', ['Sono mai stato a Roma.', 'Non ho mai stato a Roma.', 'Non mai sono stato a Roma.'], 'non + 보조동사 + mai + 과거분사'),
+      TF('c-a2u02-4', 'Non vado mai.는 부정어가 두 개라서 틀린 문장이다.', false, '이탈리아어는 non ... mai처럼 부정어가 겹쳐도 틀리지 않아요.'),
+      TF('c-a2u02-5', '동사 뒤에 mai가 올 때는 그 앞에 non이 필요하다.', true, 'Non vado mai.'),
+      Q('c-a2u02-6', '"아직(~않았다)"에 해당하는 말은?', 'ancora', ['già', 'mai', 'sempre'], 'non ... ancora'),
+      Q('c-a2u02-7', '"벌써 집에 돌아왔어요.(남자)"를 올바르게 쓴 것은?', 'Sono già tornato a casa.', ['Ho già tornato a casa.', 'Sono già tornare a casa.', 'Sono tornato non già a casa.'], 'tornare는 essere를 써요.')],
+    'a2-u03': [
+      Q('c-a2u03-1', '"로마는 피렌체보다 커요."를 올바르게 쓴 것은?', 'Roma è più grande di Firenze.', ['Roma è più grande che Firenze.', 'Roma è grande più di Firenze.', 'Roma è più grande a Firenze.'], '명사끼리 비교할 때 비교 대상 앞에는 di'),
+      Q('c-a2u03-2', '"이 책은 덜 어려워요."를 올바르게 쓴 것은?', 'Questo libro è meno difficile.', ['Questo libro è più difficile.', 'Questo libro è difficile meno.', 'Questo libro è non difficile.'], 'meno + 형용사'),
+      Q('c-a2u03-3', '"내 여동생은 나보다 어려요."를 올바르게 쓴 것은?', 'Mia sorella è più giovane di me.', ['Mia sorella è più giovane che me.', 'Mia sorella è più giovane di io.', 'Mia sorella è giovane più di me.'], 'più + 형용사 + di + 대상'),
+      Q('c-a2u03-4', 'di + il 은 무엇으로 합쳐질까요?', 'del', ['dal', 'dil', 'de'], 'di + il = del'),
+      Q('c-a2u03-5', '"기차가 버스보다 편해요."를 올바르게 쓴 것은?', "Il treno è più comodo dell'autobus.", ["Il treno è più comodo di l'autobus.", 'Il treno è più comodo del autobus.', "Il treno è più comodo che l'autobus."], "di + l' = dell'"),
+      TF('c-a2u03-6', '비교급에 쓰는 형용사는 주어의 성·수에 맞춘다.', true, 'Le case sono più grandi.'),
+      Q('c-a2u03-7', 'più의 뜻은?', '더', ['덜', '가장 적게', '아주'], 'più = 더, meno = 덜')]
+  };
+  (globalThis.CONTENT_PACKS = globalThis.CONTENT_PACKS || []).push({ id: 'a1-grammar-check', level: 'A1', version: 1, kind: 'grammar-check', source: '작성: Claude(AI) — 단원 설명 기반 이해 점검, 교재·원어민 검수 전', review: 'unreviewed', check: A1 });
+  (globalThis.CONTENT_PACKS = globalThis.CONTENT_PACKS || []).push({ id: 'a2-grammar-check', level: 'A2', version: 1, kind: 'grammar-check', source: '작성: Claude(AI) — 단원 설명 기반 이해 점검, 교재·원어민 검수 전', review: 'unreviewed', check: A2 });
+})();
+</script>
 <script>/* Italiano 핵심 로직 — 브라우저와 Node 양쪽에서 동작하는 순수 함수 모음.
    모든 날짜 계산은 'YYYY-MM-DD' 문자열(사용자 로컬 날짜)로 하며, 오늘 날짜는 항상 인자로 받습니다. */
 (function (root, factory) {
@@ -4219,7 +4379,31 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     const start = m.index + m[1].length;
     return w.example_it.slice(0, start) + '____' + w.example_it.slice(start + m[2].length);
   }
-  const QTYPES = ['it2ko', 'ko2it', 'spell', 'listen', 'cloze'];
+  /* ── 문법·구조 문제용 도우미 (모두 단어 데이터의 성별·복수형·활용표에서 만든다) ── */
+  function defArticle(word, gender) {
+    const w = stripAccents(normalizeText(word));
+    if (/^[aeiouh]/.test(w)) return "l'";
+    if (gender === 'feminine') return 'la';
+    if (/^(s[^aeiou\s]|z|gn|ps|pn|x|y)/.test(w)) return 'lo';
+    return 'il';
+  }
+  /* "io parlo · tu parli · lui parla · noi parliamo" → {io, tu, lui, noi} (4개가 모두 있을 때만) */
+  function parseConj(w) {
+    if (w.part_of_speech !== 'verb' || !w.conjugation) return null;
+    const o = {}; String(w.conjugation).split('·').forEach(p => { const m = /^\s*(io|tu|lui|lei|noi|voi|loro)\s+(.+?)\s*$/.exec(p); if (m) o[m[1] === 'lei' ? 'lui' : m[1]] = m[2]; });
+    return o.io && o.tu && o.lui && o.noi ? o : null;
+  }
+  const PERSON_LABEL = { io: 'io (나)', tu: 'tu (너)', lui: 'lui/lei (그/그녀)', noi: 'noi (우리)' };
+  const POS_KO = { noun: '명사', verb: '동사', adj: '형용사', adv: '부사', pronoun: '대명사', prep: '전치사', conj: '접속사', expression: '표현', numeral: '수사' };
+  const GRAM_TYPES = ['gender', 'article', 'plural', 'conj', 'conjin', 'verbcloze', 'adjform', 'artcloze', 'order', 'artplural', 'sing', 'person', 'adjmatch'];
+  /* 복수 정관사: 여성 le / 남성 gli(모음·s+자음·z·gn·ps·x·y 앞) / i. 복수형이 -a로 끝나는 불규칙(uova 등)은 제외 */
+  function pluralInfo(w) {
+    if (w.part_of_speech !== 'noun' || !w.gender || !w.plural || w.plural === w.word || /[\s/,'’]/.test(w.plural) || /[\s']/.test(w.word) || /a$/i.test(w.plural)) return null;
+    const art = w.gender === 'feminine' ? 'le' : (/^([aeiouàèéìòùhjxyz]|s[^aeiou]|gn|ps|pn)/i.test(w.plural) ? 'gli' : 'i');
+    return { art, form: w.plural };
+  }
+  const QTYPES = ['it2ko', 'ko2it', 'en2it', 'spell', 'listen', 'cloze', 'sent2ko', 'odd', 'pos'].concat(GRAM_TYPES);
+  const QTYPE_GROUPS = [['단어', ['it2ko', 'ko2it', 'en2it', 'spell', 'listen', 'cloze', 'sent2ko', 'odd', 'pos']], ['문법', GRAM_TYPES]];
 
   /* 문제 1개 생성. 만들 수 없으면 null */
   function makeQuestion(word, type, pool, rng, opts) {
@@ -4252,14 +4436,122 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
       const options = mc('word', w => w.word); if (!options) return null;
       return Object.assign(base, { prompt: sentence, promptSub: word.example_ko, options, answerId: word.id });
     }
+    const sing = word.part_of_speech === 'noun' && !!word.gender;
+    if (type === 'en2it') {
+      if (!word.meaning_en) return null; const options = mc('word', w => w.word); if (!options) return null;
+      return Object.assign(base, { prompt: word.meaning_en, promptSub: word.part_of_speech ? POS_KO[word.part_of_speech] : '', options, answerId: word.id });
+    }
+    if (type === 'pos') {
+      const keys = Object.keys(POS_KO); if (!POS_KO[word.part_of_speech]) return null;
+      const others = shuffle(keys.filter(k => k !== word.part_of_speech && ['noun', 'verb', 'adj', 'adv'].includes(k)), rng).slice(0, 3);
+      if (others.length < 3) return null;
+      return Object.assign(base, { prompt: word.word, promptSub: word.meaning_ko + ' — 품사는?', options: shuffle([word.part_of_speech].concat(others), rng).map(k => ({ id: k, label: POS_KO[k] })), answerId: word.part_of_speech, answerLabel: POS_KO[word.part_of_speech] });
+    }
+    if (type === 'sent2ko') {
+      if (!word.example_it || !word.example_ko) return null;
+      const d = shuffle(pool.filter(w => w.id !== word.id && w.example_ko && w.example_ko !== word.example_ko), rng).slice(0, 3); if (d.length < 3) return null;
+      return Object.assign(base, { prompt: word.example_it, promptSub: '이 문장의 뜻은?', options: shuffle([word].concat(d), rng).map(w => ({ id: w.id, label: w.example_ko })), answerId: word.id, answerLabel: word.example_ko });
+    }
+    if (type === 'odd') {
+      const cats = word.category || []; if (!cats.length) return null;
+      const byCat = {}; pool.forEach(w => (w.category || []).forEach(c => { (byCat[c] = byCat[c] || []).push(w); }));
+      const candCats = shuffle(Object.keys(byCat).filter(c => !cats.includes(c) && byCat[c].length >= 8), rng);
+      for (const c of candCats) {
+        const same = []; for (const w of shuffle(byCat[c], rng)) { if (w.id === word.id || (w.category || []).some(x => cats.includes(x))) continue; if (meaningConflict(word, w) || same.some(x => meaningConflict(x, w))) continue; same.push(w); if (same.length === 3) break; }
+        if (same.length === 3) return Object.assign(base, { prompt: '주제가 다른 단어는?', promptSub: c + ' 관련 단어 3개 + 다른 주제 1개', options: shuffle([word].concat(same), rng).map(w => ({ id: w.id, label: w.word })), answerId: word.id, explanation: word.word + '(' + word.meaning_ko + ')은 [' + cats.join(', ') + '], 나머지는 [' + c + '] 관련 단어예요.' });
+      }
+      return null;
+    }
+    if (type === 'gender') {
+      if (!sing) return null;
+      return Object.assign(base, { prompt: word.word, promptSub: word.meaning_ko + ' — 성별은?', options: [{ id: 'masculine', label: '남성 (il / lo)' }, { id: 'feminine', label: '여성 (la)' }], answerId: word.gender, answerLabel: word.gender === 'feminine' ? '여성' : '남성', explanation: word.word + ': ' + (word.gender === 'feminine' ? '여성' : '남성') + ' 명사 — ' + defArticle(word.word, word.gender) + ' ' + word.word + (word.plural ? ' · 복수 ' + word.plural : '') });
+    }
+    if (type === 'article') {
+      if (!sing) return null; const art = defArticle(word.word, word.gender);
+      return Object.assign(base, { prompt: word.word, promptSub: word.meaning_ko + ' — 알맞은 정관사는?', options: ['il', 'lo', 'la', "l'"].map(a => ({ id: a, label: a === "l'" ? "l'  (모음 앞)" : a })), answerId: art, answerLabel: art, explanation: art + (art === "l'" ? '' : ' ') + word.word + ' — ' + (art === 'lo' ? 's+자음·z·gn·ps 앞은 lo' : art === "l'" ? '모음으로 시작하면 l\'' : art === 'la' ? '여성 단수는 la' : '남성 단수 기본형 il') });
+    }
+    if (type === 'plural') {
+      if (word.part_of_speech !== 'noun' || !word.plural || word.plural === word.word || /[\s/,]/.test(word.plural)) return null;
+      return Object.assign(base, { prompt: word.word, promptSub: word.meaning_ko + ' — 복수형을 쓰세요', input: true, expected: word.plural, ph: '복수형 입력', answerLabel: word.plural, explanation: word.word + ' → ' + word.plural + (word.conjugation && /불규칙 복수/.test(word.conjugation) ? ' (' + word.conjugation + ')' : '') });
+    }
+    if (type === 'conj' || type === 'conjin') {
+      const cj = parseConj(word); if (!cj) return null;
+      const p = ['io', 'tu', 'lui', 'noi'][Math.floor(rng() * 4)]; const forms = [...new Set(['io', 'tu', 'lui', 'noi'].map(k => cj[k]))]; if (forms.length < 4) return null;
+      const lbl = word.word + ' — ' + PERSON_LABEL[p];
+      const ex = Object.assign(base, { answerLabel: cj[p], explanation: word.word + ' (' + word.meaning_ko + '): ' + word.conjugation + (/불규칙/.test(word.conjugation) ? '' : '') });
+      if (type === 'conjin') return Object.assign(ex, { prompt: lbl, promptSub: '현재형을 쓰세요', input: true, expected: cj[p], ph: '활용형 입력' });
+      return Object.assign(ex, { prompt: lbl, promptSub: '알맞은 현재형은?', options: shuffle(forms, rng).map(f => ({ id: f, label: f })), answerId: cj[p] });
+    }
+    if (type === 'verbcloze') {
+      const cj = parseConj(word); if (!cj || !word.example_it) return null;
+      for (const p of ['io', 'tu', 'lui', 'noi']) {
+        const re = wordRegex(cj[p]); const m = re.exec(word.example_it); if (!m) continue;
+        const forms = [...new Set(['io', 'tu', 'lui', 'noi'].map(k => cj[k]))]; if (forms.length < 4) return null;
+        if (forms.filter(f => wordRegex(f).test(word.example_it)).length > 1) return null;
+        const st = m.index + m[1].length;
+        return Object.assign(base, { prompt: word.example_it.slice(0, st) + '____' + word.example_it.slice(st + m[2].length), promptSub: word.example_ko + ' · 동사: ' + word.word, options: shuffle(forms, rng).map(f => ({ id: f, label: f })), answerId: cj[p], answerLabel: cj[p], explanation: cj[p] + ' (' + word.word + ' · ' + p + ')\n' + word.example_it + ' / ' + word.example_ko });
+      }
+      return null;
+    }
+    if (type === 'adjform') {
+      if (word.part_of_speech !== 'adj') return null;
+      const fem = /여성형:\s*([a-zà-ù']+)/i.exec(word.conjugation || ''), pl = word.plural && !/[\s/,]/.test(word.plural) ? word.plural : null;
+      const asks = []; if (fem) asks.push(['여성 단수형', fem[1]]); if (pl && pl !== word.word) asks.push(['남성 복수형', pl]); if (!asks.length) return null;
+      const a = asks[Math.floor(rng() * asks.length)];
+      return Object.assign(base, { prompt: word.word, promptSub: word.meaning_ko + ' — ' + a[0] + '을 쓰세요', input: true, expected: a[1], ph: a[0] + ' 입력', answerLabel: a[1], explanation: word.word + (fem ? ' → 여성 ' + fem[1] : '') + (pl ? ' · 복수 ' + pl : '') });
+    }
+    if (type === 'artcloze') {
+      if (word.part_of_speech !== 'noun' || !word.gender || !word.example_it) return null;
+      const re = new RegExp("(^|[^\\p{L}])(il |lo |la |l')(" + word.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ")(?=$|[^\\p{L}])", 'iu'); const m = re.exec(word.example_it); if (!m) return null;
+      const art = m[2].trim().toLowerCase(); if (art !== defArticle(word.word, word.gender)) return null;
+      const st = m.index + m[1].length, shown = word.example_it.slice(0, st) + '____' + (art === "l'" ? '' : ' ') + word.example_it.slice(st + m[2].length);
+      return Object.assign(base, { prompt: shown, promptSub: word.example_ko + ' · 빈칸에 알맞은 정관사', options: ['il', 'lo', 'la', "l'"].map(a => ({ id: a, label: a })), answerId: art, answerLabel: art });
+    }
+    if (type === 'artplural') {
+      const pi = pluralInfo(word); if (!pi) return null; const sa = defArticle(word.word, word.gender);
+      const lab = a => a + ' ' + pi.form, opts4 = ['i', 'gli', 'le'].concat([sa]); const labels = opts4.map(lab);
+      return Object.assign(base, { prompt: word.word + ' → ?', promptSub: word.meaning_ko + ' — "그 ~들"에 해당하는 올바른 복수 표현은?', options: shuffle(opts4, rng).map(a => ({ id: a, label: lab(a) })), answerId: pi.art, answerLabel: lab(pi.art), explanation: defArticle(word.word, word.gender) + (defArticle(word.word, word.gender) === "l'" ? '' : ' ') + word.word + ' → ' + lab(pi.art) + ' (' + (pi.art === 'le' ? '여성 복수는 le' : pi.art === 'gli' ? '남성 복수 중 모음·s+자음·z 앞은 gli' : '남성 복수 기본형 i') + ')' });
+    }
+    if (type === 'sing') {
+      const pi = pluralInfo(word); if (!pi) return null;
+      const same = pool.filter(w => w.id !== word.id && w.plural === word.plural); if (same.length) return null;
+      return Object.assign(base, { prompt: pi.form, promptSub: '복수형이에요. 단수형을 쓰세요 (' + word.meaning_ko + ')', input: true, expected: word.word, ph: '단수형 입력', answerLabel: word.word, explanation: pi.form + ' ← ' + word.word + ' (' + word.meaning_ko + ')' });
+    }
+    if (type === 'person') {
+      const cj = parseConj(word); if (!cj) return null; const forms = ['io', 'tu', 'lui', 'noi'].map(k => cj[k]); if (new Set(forms).size < 4) return null;
+      const p = ['io', 'tu', 'lui', 'noi'][Math.floor(rng() * 4)];
+      return Object.assign(base, { prompt: cj[p], promptSub: word.word + ' (' + word.meaning_ko + ') 현재형 — 이 활용형의 주어는?', options: shuffle(['io', 'tu', 'lui', 'noi'], rng).map(k => ({ id: k, label: PERSON_LABEL[k] })), answerId: p, answerLabel: PERSON_LABEL[p], explanation: cj[p] + ' = ' + PERSON_LABEL[p] + '  (' + word.conjugation + ')' });
+    }
+    if (type === 'adjmatch') {
+      if (word.part_of_speech !== 'adj' || !/o$/i.test(word.word)) return null;
+      const fem = /여성형:\s*([a-zà-ù]+)/i.exec(word.conjugation || ''); if (!fem || fem[1] !== word.word.slice(0, -1) + 'a' || /(ca|ga|cia|gia|ia)$/i.test(fem[1]) || word.plural !== word.word.slice(0, -1) + 'i' || /(co|go|io)$/i.test(word.word)) return null;
+      const nouns = pool.filter(n => n.part_of_speech === 'noun' && !/[\s'’]/.test(n.word) && pluralInfo(n)); if (!nouns.length) return null;
+      const n = nouns[Math.floor(rng() * nouns.length)], pl = rng() < 0.5, pi = pluralInfo(n);
+      const forms = { ms: word.word, fs: fem[1], mp: word.plural, fp: fem[1].slice(0, -1) + 'e' }, key = (n.gender === 'feminine' ? 'f' : 'm') + (pl ? 'p' : 's');
+      const art = pl ? pi.art : defArticle(n.word, n.gender), noun = pl ? pi.form : n.word;
+      return Object.assign(base, { prompt: art + (art === "l'" ? '' : ' ') + noun + (pl ? ' sono' : ' è') + ' ____.', promptSub: word.meaning_ko + ' (' + word.word + ') — 명사에 맞는 형태는?  · ' + n.meaning_ko, options: shuffle(Object.keys(forms), rng).map(k => ({ id: k, label: forms[k] })), answerId: key, answerLabel: forms[key], explanation: noun + '은(는) ' + (n.gender === 'feminine' ? '여성' : '남성') + ' ' + (pl ? '복수' : '단수') + '이므로 ' + forms[key] + ' (' + forms.ms + ' / ' + forms.fs + ' / ' + forms.mp + ' / ' + forms.fp + ')' });
+    }
+    if (type === 'order') {
+      if (!word.example_it) return null; const toks = word.example_it.replace(/[.!?,;:]+/g, ' ').trim().split(/\s+/).filter(Boolean); if (toks.length < 3 || toks.length > 8) return null;
+      let sh = shuffle(toks.map((t, i) => ({ t, i })), rng), tries = 0; while (sh.every((x, i) => x.i === i) && tries++ < 5) sh = shuffle(sh, rng);
+      return Object.assign(base, { prompt: word.example_ko, promptSub: '낱말을 눌러 올바른 어순으로 배열하세요', order: true, tokens: sh.map(x => x.t), expected: toks.join(' '), answerLabel: toks.join(' ') });
+    }
     throw new Error('알 수 없는 문제 유형: ' + type);
+  }
+  /* 이 단어로 해당 유형의 문제를 만들 수 있는가 (문법 유형은 명사·동사·형용사에만 해당) */
+  function canMake(word, types, pool, opts) { return types.some(t => { try { return !!makeQuestion(word, t, pool, Math.random, opts || {}); } catch (e) { return false; } }); }
+  /* 선택한 유형으로 문제를 만들 수 있는 단어를 먼저 고른다 (문법 유형만 고르면 해당 품사 단어 위주로 출제) */
+  function pickQuizTargets(words, pool, types, n, rng, opts) {
+    rng = rng || Math.random; const sh = shuffle(words.slice(), rng), ok = [], rest = [];
+    for (const w of sh) (canMake(w, types, pool, opts) ? ok : rest).push(w);
+    return ok.concat(rest).slice(0, n);
   }
   /* 지정한 유형 목록에서 번갈아 가며 문제 세트를 만든다. 불가능한 유형은 it2ko로 대체 */
   function buildQuiz(targets, pool, types, rng, opts) {
     rng = rng || Math.random; types = (types && types.length ? types : QTYPES);
     const out = [];
     targets.forEach((w, i) => {
-      const order = [types[i % types.length]].concat(types.filter(t => t !== types[i % types.length]), ['it2ko', 'ko2it']);
+      const k = i % types.length, order = types.slice(k).concat(types.slice(0, k), ['it2ko', 'ko2it']);
       for (const t of order) {
         const q = makeQuestion(w, t, pool, rng, Object.assign({}, opts, { clozeInput: rng() < 0.4 }));
         if (q) { out.push(q); break; }
@@ -4269,6 +4561,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
   }
   /* 채점. 철자 입력은 대소문자·공백만 정규화하고 악센트 오류는 오답(단 안내)으로 처리 */
   function gradeAnswer(q, answer) {
+    if (q.order) { const got = normalizeText(answer), exp = normalizeText(q.expected); return { correct: got === exp, kind: got === exp ? 'exact' : (got ? 'wrong' : 'empty'), expected: q.expected }; }
     if (q.options) return { correct: answer === q.answerId, kind: answer === q.answerId ? 'exact' : 'wrong', expected: q.answerLabel };
     const got = normalizeText(answer), exp = normalizeText(q.expected);
     if (got === exp) return { correct: true, kind: 'exact', expected: q.expected };
@@ -4395,7 +4688,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     dateStr, addDays, diffDays, mulberry32, shuffle, buildWords, validateWords, newState, migrate, getAllWords, wordMap,
     newProgress, getProgress, applyRating, rate, recordQuiz, isDue, getDue, candidatesForNew, ensureDaily, extendToday, nextNewWordId, todaySummary,
     computeStreak, series, weekly, monthly, computeStats, levelStatus, wrongBook,
-    normalizeText, stripAccents, levenshtein, meaningConflict, pickDistractors, clozeOf, makeQuestion, buildQuiz, gradeAnswer,
+    normalizeText, stripAccents, levenshtein, meaningConflict, pickDistractors, clozeOf, makeQuestion, buildQuiz, gradeAnswer, defArticle, parseConj, QTYPE_GROUPS, GRAM_TYPES, canMake, pickQuizTargets,
     startSession, sessionTick, finishSession, searchWords, filterWords, toggleFavorite, addCustomWord, editWord, deleteWord,
     toCSV, parseCSV, importCSV, exportJSON, importJSON };
 });
@@ -5098,6 +5391,10 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
       const u = reg.grammar.find(x => x.id === uid); if (!u) { reg.errors.push(p.id + ': 없는 단원 ' + uid); continue; }
       u.deep = d; u.deepMeta = { pack: p.id, source: p.source, review: p.review || 'unreviewed' };
     }
+    for (const p of packs || []) if (p && p.check && C.LEVELS.includes(p.level)) for (const [uid, arr] of Object.entries(p.check)) {
+      const u = reg.grammar.find(x => x.id === uid); if (!u) { reg.errors.push(p.id + ': 없는 단원 ' + uid); continue; }
+      u.check = arr; u.checkMeta = { pack: p.id, source: p.source, review: p.review || 'unreviewed' };
+    }
     reg.reviews = (reviews || []).slice();
     reg.packList = (packs || []).filter(p => p && p.id && C.LEVELS.includes(p.level));
     return reg;
@@ -5614,7 +5911,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
   const POS = { noun: '명사', verb: '동사', adj: '형용사', adv: '부사', pronoun: '대명사', prep: '전치사', conj: '접속사', expression: '표현', numeral: '수사' };
   const POS_KO = { noun: '명사', verb: '동사', adj: '형용사', adv: '부사', pronoun: '대명사', prep: '전치사', conj: '접속사', numeral: '수사', expression: '표현' };
   const STATUS_KO = { new: '새 단어', learning: '학습 중', review: '복습', mastered: '암기 완료' };
-  const QT_KO = { it2ko: '이탈리아어 → 한국어', ko2it: '한국어 → 이탈리아어', spell: '철자 입력', listen: '발음 듣기', cloze: '문장 완성' };
+  const QT_KO = { it2ko: '이탈리아어 → 한국어', ko2it: '한국어 → 이탈리아어', en2it: '영어 → 이탈리아어', spell: '철자 입력', listen: '발음 듣기', cloze: '문장 완성', sent2ko: '예문 해석', odd: '다른 주제 찾기', pos: '품사 고르기', gender: '성별 고르기', article: '정관사 고르기', plural: '복수형 쓰기', conj: '동사 활용 고르기', conjin: '동사 활용 쓰기', verbcloze: '동사 활용 빈칸', adjform: '형용사 변화 쓰기', artcloze: '관사 빈칸', order: '어순 배열', artplural: '복수 관사+명사', sing: '복수 → 단수', person: '활용형의 인칭', adjmatch: '형용사 일치' };
   const UI = { tab: 'home', mode: null, cards: null, quiz: null, sheet: null, wf: { q: '', level: '', category: '', pos: '', status: '', fav: false, limit: 60 }, reviewSeg: 'due', statsRange: 'daily', qsetup: null, storage: '', save: 'saved', studySeg: 'words' };
 
   const hooks = { wordMore: null, modes: {}, sheets: {}, study: {}, after: [], me: null, studyTop: null, flow: null, onStart: [], onDay: [], onImport: [] };
@@ -5926,7 +6223,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     UI.qsetup = { src, types: new Set(C.QTYPES), n: 10 }; UI.sheet = { type: 'quizsetup' }; render();
   }
   function startQuiz(words, types, n, title) {
-    const picked = C.shuffle(words).slice(0, n);
+    const picked = C.pickQuizTargets(words, WORDS, types, n, Math.random, { canSpeak: ttsAvailable() });
     if (!picked.length) { toast('시험을 볼 단어가 없어요. 먼저 단어를 학습해 주세요.'); return; }
     const qs = C.buildQuiz(picked, WORDS, types, Math.random, { canSpeak: ttsAvailable() });
     UI.quiz = { title, qs, i: 0, picked: null, graded: null, results: [], types, session: C.startSession(S, nowIso()) };
@@ -5937,13 +6234,17 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
   function vQuiz() {
     const Q = UI.quiz, q = Q.qs[Q.i], g = Q.graded;
     const top = '<div class="study-top"><button class="iconbtn" data-act="closeQuiz" aria-label="퀴즈 종료">' + svg('close') + '</button><div class="grow"><div class="row between sub"><span>' + esc(Q.title) + ' · ' + QT_KO[q.type] + '</span><span>' + (Q.i + 1) + ' / ' + Q.qs.length + '</span></div><div class="bar" style="margin-top:6px"><i style="width:' + Math.round(Q.i / Q.qs.length * 100) + '%"></i></div></div></div>';
-    let card = '<div class="q-card"><div class="q-prompt ' + (q.type === 'cloze' ? 'sentence' : '') + '">' + esc(q.prompt) + '</div>' + (q.promptSub ? '<div class="sub">' + esc(q.promptSub) + '</div>' : '') +
+    let card = '<div class="q-card"><div class="q-prompt ' + (['cloze', 'sent2ko', 'verbcloze', 'artcloze', 'order'].includes(q.type) ? 'sentence' : '') + '">' + esc(q.prompt) + '</div>' + (q.promptSub ? '<div class="sub">' + esc(q.promptSub) + '</div>' : '') +
       (q.speak ? '<button class="btn soft" data-act="speak" data-text="' + esc(q.speak) + '">' + svg('speak', 18) + ' 다시 듣기</button>' : '') + '</div>';
     let ans = '';
     if (q.options) {
       ans = '<div class="opts">' + q.options.map(o => '<button class="opt ' + (g ? (o.id === q.answerId ? 'right' : (o.id === Q.picked ? 'wrong' : '')) : '') + '" data-act="pick" data-id="' + esc(o.id) + '" ' + (g ? 'disabled' : '') + '>' + (g ? (o.id === q.answerId ? '<span class="mk">✓ 정답</span> ' : (o.id === Q.picked ? '<span class="mk">✗ 내 답</span> ' : '')) : '') + esc(o.label) + '</button>').join('') + '</div>';
+    } else if (q.order) {
+      const used = Q.arr || [], free = q.tokens.map((t, i) => [t, i]).filter(x => !used.includes(x[1]));
+      ans = '<div class="arr-line" aria-label="내가 만든 문장">' + (used.length ? used.map(i => '<span class="chip big on">' + esc(q.tokens[i]) + '</span>').join('') : '<span class="sub">낱말을 눌러 문장을 만드세요</span>') + '</div>' +
+        (g ? '' : '<div class="chips" style="flex-wrap:wrap">' + free.map(x => '<button class="chip big" data-act="oadd" data-i="' + x[1] + '">' + esc(x[0]) + '</button>').join('') + '</div><div class="row"><button class="btn ghost grow" data-act="oundo" ' + (used.length ? '' : 'disabled') + '>한 칸 지우기</button><button class="btn grow" data-act="osubmit" ' + (used.length ? '' : 'disabled') + '>확인</button></div>');
     } else if (!g) {
-      ans = '<input id="qin" class="field" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="이탈리아어로 입력" aria-label="답 입력"><div class="chips">' + ['à', 'è', 'é', 'ì', 'ò', 'ù'].map(ch => '<button class="chip" data-act="ins" data-ch="' + ch + '" aria-label="' + ch + ' 입력">' + ch + '</button>').join('') + '</div><button class="btn" data-act="submitText">확인</button>';
+      ans = '<input id="qin" class="field" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="' + esc(q.ph || '이탈리아어로 입력') + '" aria-label="답 입력"><div class="chips">' + ['à', 'è', 'é', 'ì', 'ò', 'ù'].map(ch => '<button class="chip" data-act="ins" data-ch="' + ch + '" aria-label="' + ch + ' 입력">' + ch + '</button>').join('') + '</div><button class="btn" data-act="submitText">확인</button>';
     } else ans = '<input class="field" value="' + esc(Q.picked) + '" disabled aria-label="내 답">';
     let fb = '';
     if (g) {
@@ -5958,7 +6259,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     C.recordQuiz(S, q, answer, g.correct, today, nowIso()); C.sessionTick(Q.session, false, g.correct); commit(); render();
   }
   function nextQuestion() {
-    const Q = UI.quiz; Q.i++; Q.graded = null; Q.picked = null;
+    const Q = UI.quiz; Q.i++; Q.graded = null; Q.picked = null; Q.arr = [];
     if (Q.i >= Q.qs.length) { C.finishSession(Q.session, nowIso()); UI.mode = 'result'; commit(); }
     render(); window.scrollTo(0, 0); if (UI.mode === 'quiz') autoSpeakQuestion();
   }
@@ -6010,7 +6311,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
   function quizSetupSheet() {
     const Z = UI.qsetup, srcs = [['due', '복습 예정'], ['today', '오늘 학습'], ['learned', '전체 학습'], ['wrong', '오답']];
     return '<h3>퀴즈 설정</h3><div class="col"><span class="sub">범위</span><div class="chips">' + srcs.map(([k, l]) => '<button class="chip ' + (Z.src === k ? 'on' : '') + '" data-act="qsrc" data-k="' + k + '">' + l + ' ' + quizTargets(k).length + '</button>').join('') + '</div></div>' +
-      '<div class="col"><span class="sub">문제 유형 (여러 개 선택)</span><div class="chips" style="flex-wrap:wrap">' + C.QTYPES.map(t => '<button class="chip ' + (Z.types.has(t) ? 'on' : '') + '" data-act="qtype" data-t="' + t + '">' + QT_KO[t] + '</button>').join('') + '</div></div>' +
+      '<div class="col"><span class="sub">문제 유형 (여러 개 선택)</span>' + C.QTYPE_GROUPS.map(([gl, ts]) => '<div class="sub" style="margin-top:4px"><b>' + gl + '</b>' + (gl === '문법' ? ' · 해당하는 품사의 단어로 출제돼요' : '') + '</div><div class="chips" style="flex-wrap:wrap">' + ts.map(t => '<button class="chip ' + (Z.types.has(t) ? 'on' : '') + '" data-act="qtype" data-t="' + t + '">' + QT_KO[t] + '</button>').join('') + '</div>').join('') + '<div class="row"><button class="btn ghost small" data-act="qall" data-k="all">전체 선택</button><button class="btn ghost small" data-act="qall" data-k="word">단어만</button><button class="btn ghost small" data-act="qall" data-k="gram">문법만</button></div></div>' +
       '<div class="col"><span class="sub">문제 수</span><div class="chips">' + [5, 10, 20].map(n => '<button class="chip ' + (Z.n === n ? 'on' : '') + '" data-act="qn" data-n="' + n + '">' + n + '문제</button>').join('') + '</div></div>' +
       (!ttsAvailable() ? '<p class="sub">이 기기에서는 발음 듣기 문제를 낼 수 없어 자동으로 제외돼요.</p>' : '') + '<button class="btn" data-act="qstart">시작</button>';
   }
@@ -6071,7 +6372,11 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     closeCards() { UI.mode = null; UI.cards = null; render(); window.scrollTo(0, 0); },
     cardsQuiz() { const ids = UI.cards.studied; const ws = ids.map(id => WM[id]).filter(Boolean); UI.cards = null; startQuiz(ws, C.QTYPES, Math.min(ws.length, 20), '학습 확인'); },
     openQuiz(d) { openQuiz(d.src); },
+    oadd(d) { const Q = UI.quiz; if (Q.graded) return; Q.arr = (Q.arr || []).concat([Number(d.i)]); render(); },
+    oundo() { const Q = UI.quiz; if (Q.graded || !Q.arr) return; Q.arr = Q.arr.slice(0, -1); render(); },
+    osubmit() { const Q = UI.quiz; if (Q.graded || !Q.arr || !Q.arr.length) return; const q = Q.qs[Q.i]; answerQuiz(Q.arr.map(i => q.tokens[i]).join(' ')); },
     qsrc(d) { UI.qsetup.src = d.k; render(); },
+    qall(d) { const G = Object.fromEntries(C.QTYPE_GROUPS.map(([l, t]) => [l, t])); UI.qsetup.types = new Set(d.k === 'all' ? C.QTYPES : d.k === 'word' ? G['단어'] : G['문법']); render(); },
     qtype(d) { const s = UI.qsetup.types; if (s.has(d.t)) { if (s.size > 1) s.delete(d.t); } else s.add(d.t); render(); },
     qn(d) { UI.qsetup.n = Number(d.n); render(); },
     qstart() { const Z = UI.qsetup, ws = quizTargets(Z.src); const names = { due: '복습 퀴즈', today: '오늘 퀴즈', learned: '전체 퀴즈', wrong: '오답 시험' }; startQuiz(ws, [...Z.types], Z.n, names[Z.src]); },
@@ -6185,7 +6490,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     if (!IS_ARTIFACT && 'serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => { });
   }
   window.__italiano = { get state() { return S; }, UI, C, flush, get today() { return today; }, setToday(d) { today = d; C.ensureDaily(S, WORDS, today); render(); } };
-  window.App = { hooks, A, UI, start: init, render, commit, flush, esc, svg, toast, speak, head, ttsAvailable, ttsSupported, fmtDate, wordRow,
+  window.App = { hooks, A, UI, startQuiz, start: init, render, commit, flush, esc, svg, toast, speak, head, ttsAvailable, ttsSupported, fmtDate, wordRow,
     get S() { return S; }, get WORDS() { return WORDS; }, get WM() { return WM; }, get today() { return today; }, nowIso, C, BUILTIN, closeSheet };
 })();
 </script>
@@ -6404,7 +6709,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     X.gr = { id: u.id, phase: M.unitProgress(S(), u).read ? 'menu' : 'read', idx: 0, text: '', tries: 0, picked: null, done: false, results: [] }; X.grRes = null; UI.mode = 'x:gr'; saveDraft(); App.render(); window.scrollTo(0, 0);
   };
   const grUnit = () => REG.grammar.find(x => x.id === X.gr.id);
-  const grList = (u) => M.gSession(REG, u, (X.gr && X.gr.mix) || []);
+  const grList = (u) => (X.gr && X.gr.check && u.check) ? u.check : M.gSession(REG, u, (X.gr && X.gr.mix) || []);
   const grOwner = (u, ex) => (ex && ex.mixFrom && REG.grammar.find(x => x.id === ex.mixFrom)) || u;
   const grTask = (u, ex) => ex.type === 'cloze' ? Object.assign({}, ex, { type: 'complete', skill: u.skill, module: 'gr' }) : Object.assign({}, ex, { skill: u.skill, module: 'gr' });
   /* 문법 단원 읽기 화면: 12구조(목표 · 핵심 규칙 · 이유 · 기본 예문 · 여러 상황 예문 · 예외 · 비교 · 한국인 실수 · 연습 · 써 보기 · 복습 · 실제 쓰임) */
@@ -6433,7 +6738,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
       h += sec(12, '실제 대화에서는', d.real.map(exRow).join(''));
     }
     h += '</div>';
-    return h + '<button class="btn" data-act="grStart">' + (p.tried ? '연습 이어하기 (' + p.done + ' / ' + p.total + ')' : '연습 시작') + '</button><button class="btn ghost" data-act="grClose">목록으로</button>';
+    return h + (u.check && u.check.length ? '<button class="btn soft" data-act="grCheck">이해 점검 (' + u.check.length + '문제) — 단원 완료 기준과는 별개</button>' : '') + '<button class="btn" data-act="grStart">' + (p.tried ? '연습 이어하기 (' + p.done + ' / ' + p.total + ')' : '연습 시작') + '</button><button class="btn ghost" data-act="grClose">목록으로</button>';
   }
   H.modes.gr = () => {
     const G = X.gr; if (!G) { UI.mode = null; return ''; }
@@ -6443,7 +6748,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     }
     if (G.phase === 'end') return grEnd(u);
     const list = grList(u), ex = list[G.idx];
-    let body = topBar('문법 연습', (G.idx + 1) + ' / ' + list.length, 'grClose', Math.round(G.idx / list.length * 100));
+    let body = topBar(G.check ? '이해 점검' : '문법 연습', (G.idx + 1) + ' / ' + list.length, 'grClose', Math.round(G.idx / list.length * 100));
     body += (ex.mixFrom ? '<div class="sub mixnote">앞서 배운 "' + esc(grOwner(u, ex).title) + '"을(를) 섞어서 복습해요</div>' : '') + '<div class="q-card"><div class="tag">' + ({ mcq: '객관식', cloze: '빈칸', fix: '오류 고치기', translate: '번역', free: '자유 작성' }[ex.type]) + '</div>';
     if (ex.type === 'mcq') body += '<div class="q-prompt sentence">' + esc(ex.q) + '</div></div>';
     else if (ex.type === 'cloze') body += '<div class="q-prompt sentence">' + esc(ex.q) + '</div><div class="sub">' + esc(ex.ko || '') + '</div></div>';
@@ -6462,7 +6767,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
         body += '<div class="card flat"><div class="col"><div><div class="sub">내 답</div><div class="sent">' + esc(G.text) + '</div></div>' + (r.fixed && !ok ? '<div><div class="sub">고친 문장</div><div class="sent good">' + esc(r.fixed) + '</div></div>' : '') + (errs.length ? '<ul class="why">' + errs.map(i => '<li><span class="tag">' + esc(L.CAT_KO[i.cat] || i.cat) + '</span> ' + esc(i.msg) + '</li>').join('') + '</ul>' : '') + (!ok && ex.accept ? '<div><div class="sub">허용 답안</div><div class="it">' + esc(ex.accept.slice(0, 3).join(' / ')) + '</div></div>' : '') + '</div></div>';
       }
       if (!ok) { const ee = errExtra(r); if (ee) body += '<div class="card flat"><div class="col errx">' + ee + '</div></div>'; }
-      body += '<div class="col">' + (!ok && ex.type !== 'mcq' && G.tries < 2 ? '<button class="btn" data-act="grRetry">다시 써 보기</button>' : '') + '<button class="btn ' + (!ok && ex.type !== 'mcq' && G.tries < 2 ? 'ghost' : '') + '" data-act="grNext">' + (G.idx + 1 >= u.exercises.length ? '단원 마치기' : '다음 문제') + '</button></div>';
+      body += '<div class="col">' + (!ok && ex.type !== 'mcq' && G.tries < 2 ? '<button class="btn" data-act="grRetry">다시 써 보기</button>' : '') + '<button class="btn ' + (!ok && ex.type !== 'mcq' && G.tries < 2 ? 'ghost' : '') + '" data-act="grNext">' + (G.idx + 1 >= list.length ? (G.check ? '점검 마치기' : '단원 마치기') : '다음 문제') + '</button></div>';
     }
     return body;
   };
@@ -6470,12 +6775,13 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     const st = M.unitState(S(), u.id), e = st.ex[ex.id] || (st.ex[ex.id] = { n: 0, ok: 0, last: null }); e.n++; if (ok) e.ok++; e.last = App.today; st.last = App.today;
   }
   const grText = () => { const el = document.getElementById('grin'); return el ? el.value : X.gr.text; };
-  A.grStart = () => { const G = X.gr, u = grUnit(); M.markRead(S(), u.id, App.today); if (!G.mix || !G.mix.length) G.mix = M.mixedFor(S(), REG, u, App.today); const first = u.exercises.findIndex(e => { const s = S().lang.units[u.id].ex[e.id]; return !s || !s.n; }); G.phase = 'ex'; G.idx = first < 0 ? 0 : first; G.text = ''; G.tries = 0; G.firstRes = null; saveDraft(); App.render(); window.scrollTo(0, 0); };
+  A.grCheck = () => { const G = X.gr, u = grUnit(); G.check = true; G.cOk = 0; G.phase = 'ex'; G.idx = 0; G.text = ''; G.tries = 0; G.picked = null; saveDraft(); App.render(); window.scrollTo(0, 0); };
+  A.grStart = () => { const G = X.gr, u = grUnit(); G.check = false; M.markRead(S(), u.id, App.today); if (!G.mix || !G.mix.length) G.mix = M.mixedFor(S(), REG, u, App.today); const first = u.exercises.findIndex(e => { const s = S().lang.units[u.id].ex[e.id]; return !s || !s.n; }); G.phase = 'ex'; G.idx = first < 0 ? 0 : first; G.text = ''; G.tries = 0; G.firstRes = null; saveDraft(); App.render(); window.scrollTo(0, 0); };
   A.grPick = d => {
     const G = X.gr, u0 = grUnit(), ex = grList(u0)[G.idx], u = grOwner(u0, ex), i = Number(d.i), ok = i === ex.answer; G.picked = i; G.text = ex.options[i];
     const uc = REG.loop.unitCat[u.id] || null, wcat = !ok && uc ? [uc] : [], wsub = !ok && ex.sub ? [ex.sub] : [];
     M.recordAttempt(S(), { module: 'gr', taskId: ex.id, type: 'mcq', skill: u.skill, cls: ok ? 'natural' : 'ungrammatical', cats: wcat, subs: wsub, why: ok ? null : (ex.why || null), text: ex.options[i], fixed: ok ? null : ex.options[ex.answer], words: [] }, App.today, nowIso());
-    grRecord(u, ex, ok); X.grRes = { cls: ok ? 'natural' : 'ungrammatical', issues: wcat.length ? [{ cat: wcat[0], sev: 'error', sub: wsub[0], msg: ex.why || '' }] : [] }; G.phase = 'fb'; G.ok = ok; saveDraft(); App.render();
+    grRecord(u, ex, ok); X.grRes = { cls: ok ? 'natural' : 'ungrammatical', issues: wcat.length ? [{ cat: wcat[0], sev: 'error', sub: wsub[0], msg: ex.why || '' }] : [] }; G.phase = 'fb'; G.ok = ok; if (G.check && ok) G.cOk = (G.cOk || 0) + 1; saveDraft(); App.render();
   };
   A.grSubmit = () => {
     const G = X.gr, u0 = grUnit(), ex = grList(u0)[G.idx], u = grOwner(u0, ex), text = grText(); G.text = text; if (!text.trim()) { toast('답을 입력해 주세요.'); return; }
@@ -6493,6 +6799,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
   };
   A.grClose = () => { if (X.gr && X.gr.phase !== 'end') saveDraft(); UI.mode = null; X.gr = null; App.render(); window.scrollTo(0, 0); };
   function grEnd(u) {
+    if (X.gr.check) { const n = (u.check || []).length; return '<div class="stripe"></div><div class="card" style="text-align:center"><div class="col" style="align-items:center"><div class="tag">이해 점검 결과</div><div class="big-num">' + (X.gr.cOk || 0) + ' / ' + n + '</div><p class="sub">단원 완료 판정에는 반영되지 않아요. 틀린 문제는 단원의 "핵심 규칙"을 다시 읽어 보세요.</p></div></div><button class="btn" data-act="grCheck">다시 풀기</button><button class="btn ghost" data-act="grClose">단원 목록으로</button>'; }
     const p = M.unitProgress(S(), u), st = M.unitState(S(), u.id);
     const wrong = u.exercises.filter(e => st.ex[e.id] && st.ex[e.id].n > 0 && st.ex[e.id].ok === 0);
     const opened = REG.grammar.filter(x => (x.prereq || []).includes(u.id) && M.unitUnlocked(S(), REG, x) && !M.unitProgress(S(), x).read);
