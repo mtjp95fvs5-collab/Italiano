@@ -96,6 +96,7 @@ p { margin: 0; }
 .forms { font-size: 13px; color: var(--muted); }
 .rate { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .rate button { border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 12px 4px; font-size: 13px; font-weight: 650; display: flex; flex-direction: column; gap: 2px; align-items: center; }
+.rate.two { grid-template-columns: 1fr 1fr; }
 .rate button small { font-weight: 500; color: var(--muted); font-size: 11px; }
 .rate .again { color: var(--red); } .rate .easy { color: var(--green); }
 /* 퀴즈 */
@@ -4195,7 +4196,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
   }
 
   /* 퀴즈 결과 반영. 복습 예정이 아닌 단어를 맞힌 경우 간격은 늘리지 않는다. */
-  function recordQuiz(state, q, answer, correct, today, nowIso) {
+  function recordQuiz(state, q, answer, correct, today, nowIso, defer) {
     state.counters.attempt += 1;
     state.quizAttempts.push({ id: 'qa_' + state.counters.attempt, user_id: 'local', word_id: q.wordId,
       question_type: q.type, user_answer: String(answer == null ? '' : answer), is_correct: !!correct, attempted_at: nowIso || today });
@@ -4203,10 +4204,39 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     l.quizTotal += 1; if (correct) l.quizCorrect += 1;
     const p = state.progress[q.wordId];
     if (!p || !p.introduced_on) return null;
+    if (defer) return p;
     if (!correct) { const wasDue = isDue(p, today); applyRating(p, 'again', today, nowIso); if (wasDue) l.review += 1; l.incorrect += 1; return p; }
     if (isDue(p, today)) { applyRating(p, 'normal', today, nowIso); l.review += 1; l.correct += 1; }
     else { p.correct_count += 1; p.streak += 1; if (p.incorrect_count > 0) p.wrong_streak += 1; }
     return p;
+  }
+
+  /* 학습 화면에서 '다음'으로 넘긴 새 단어: 안다/모른다 평가 없이 학습 목록에 넣고, 복습 퀴즈로 평가받도록 오늘 복습 대상으로 둔다 */
+  function introduce(state, wordId, today, nowIso) {
+    const p = getProgress(state, wordId, true);
+    if (p.introduced_on) return { progress: p, isNew: false };
+    p.introduced_on = today; p.status = 'learning'; p.next_review_at = today; p.interval_days = 0; p.last_reviewed_at = today;
+    dayLog(state, today).new += 1;
+    return { progress: p, isNew: true };
+  }
+  /* 한 단어에 여러 문제를 낸 뒤 결과(맞힌 수/전체)로 간격을 한 번만 조정한다 */
+  function settleWord(state, wordId, ok, n, today, nowIso) {
+    const p = state.progress[wordId]; if (!p || !p.introduced_on || !n) return null;
+    const ratio = ok / n, due = isDue(p, today), l = dayLog(state, today);
+    let rating = null;
+    if (ratio === 1) rating = due ? (n >= 4 ? 'easy' : 'normal') : null;
+    else if (ratio >= 0.6) rating = due ? 'hard' : null;
+    else rating = 'again';
+    if (!rating) { if (ratio === 1) { p.correct_count += 1; p.streak += 1; if (p.incorrect_count > 0) p.wrong_streak += 1; } return { rating: null, ratio }; }
+    applyRating(p, rating, today, nowIso);
+    if (due) l.review += 1; if (rating === 'again') l.incorrect += 1; else l.correct += 1;
+    return { rating, ratio };
+  }
+  /* 약한 정도(클수록 약함): 오답률·연속 정답·난이도·밀린 일수 */
+  function weakScore(state, w, today) {
+    const p = state.progress[w.id]; if (!p || !p.introduced_on) return 0;
+    const tot = Math.max(1, p.total_reviews || 0), over = p.next_review_at && p.next_review_at <= today ? Math.min(10, Math.round((Date.parse(today) - Date.parse(p.next_review_at)) / 864e5)) : 0;
+    return (p.incorrect_count || 0) / tot * 4 + (p.incorrect_count || 0) * 0.5 + (p.streak ? -Math.min(p.streak, 5) * 0.4 : 0.5) + (2.5 - (p.ease_factor || 2.5)) + over * 0.1 + (p.wrong_streak > 0 && p.wrong_streak < 3 ? 0.5 : 0);
   }
 
   function isDue(p, today) { return !!p && !!p.introduced_on && !!p.next_review_at && p.next_review_at <= today; }
@@ -4542,7 +4572,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
   function canMake(word, types, pool, opts) { return types.some(t => { try { return !!makeQuestion(word, t, pool, Math.random, opts || {}); } catch (e) { return false; } }); }
   /* 선택한 유형으로 문제를 만들 수 있는 단어를 먼저 고른다 (문법 유형만 고르면 해당 품사 단어 위주로 출제) */
   function pickQuizTargets(words, pool, types, n, rng, opts) {
-    rng = rng || Math.random; const sh = shuffle(words.slice(), rng), ok = [], rest = [];
+    rng = rng || Math.random; const sh = (opts && opts.ordered) ? words.slice() : shuffle(words.slice(), rng), ok = [], rest = [];
     for (const w of sh) (canMake(w, types, pool, opts) ? ok : rest).push(w);
     return ok.concat(rest).slice(0, n);
   }
@@ -4557,6 +4587,30 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
         if (q) { out.push(q); break; }
       }
     });
+    return out;
+  }
+  /* 한 단어를 여러 방면에서 묻는다: 인식(뜻 고르기)·떠올리기(철자/빈칸)·문장·형태(문법) 계열을 번갈아 고른다 */
+  const QFAMILY = { it2ko: 'rec', ko2it: 'rec', en2it: 'rec', listen: 'rec', spell: 'prod', cloze: 'prod', sent2ko: 'sent', order: 'sent', artcloze: 'sent', verbcloze: 'sent', odd: 'misc', pos: 'misc' };
+  const famOf = t => QFAMILY[t] || 'form';
+  function questionsFor(word, types, perWord, pool, rng, opts, usedTypes) {
+    const used = new Set(usedTypes || []), fams = {};
+    shuffle(types.filter(t => !used.has(t)), rng).forEach(t => { (fams[famOf(t)] = fams[famOf(t)] || []).push(t); });
+    const order = shuffle(Object.keys(fams), rng), out = []; let guard = 0;
+    while (out.length < perWord && order.some(f => fams[f].length) && guard++ < 60) {
+      for (const f of order) {
+        if (out.length >= perWord) break; let q = null;
+        while (fams[f].length && !q) { const t = fams[f].shift(); q = makeQuestion(word, t, pool, rng, Object.assign({}, opts, { clozeInput: rng() < 0.4 })); }
+        if (q) out.push(q);
+      }
+    }
+    return out;
+  }
+  /* 단어마다 perWord개 문제 — 같은 단어 문제가 연달아 나오지 않게 단어를 돌아가며 배치 */
+  function buildQuizMulti(targets, pool, types, perWord, rng, opts) {
+    rng = rng || Math.random; types = (types && types.length ? types : QTYPES);
+    const lists = targets.map(w => questionsFor(w, types, perWord, pool, rng, opts));
+    lists.forEach((l, i) => { if (!l.length) { const q = makeQuestion(targets[i], 'it2ko', pool, rng, opts) || makeQuestion(targets[i], 'ko2it', pool, rng, opts); if (q) l.push(q); } });
+    const out = []; for (let k = 0; k < perWord; k++) for (const l of lists) if (l[k]) out.push(l[k]);
     return out;
   }
   /* 채점. 철자 입력은 대소문자·공백만 정규화하고 악센트 오류는 오답(단 안내)으로 처리 */
@@ -4688,7 +4742,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     dateStr, addDays, diffDays, mulberry32, shuffle, buildWords, validateWords, newState, migrate, getAllWords, wordMap,
     newProgress, getProgress, applyRating, rate, recordQuiz, isDue, getDue, candidatesForNew, ensureDaily, extendToday, nextNewWordId, todaySummary,
     computeStreak, series, weekly, monthly, computeStats, levelStatus, wrongBook,
-    normalizeText, stripAccents, levenshtein, meaningConflict, pickDistractors, clozeOf, makeQuestion, buildQuiz, gradeAnswer, defArticle, parseConj, QTYPE_GROUPS, GRAM_TYPES, canMake, pickQuizTargets,
+    normalizeText, stripAccents, levenshtein, meaningConflict, pickDistractors, clozeOf, makeQuestion, buildQuiz, gradeAnswer, defArticle, parseConj, QTYPE_GROUPS, questionsFor, buildQuizMulti, introduce, settleWord, weakScore, GRAM_TYPES, canMake, pickQuizTargets,
     startSession, sessionTick, finishSession, searchWords, filterWords, toggleFavorite, addCustomWord, editWord, deleteWord,
     toCSV, parseCSV, importCSV, exportJSON, importJSON };
 });
@@ -6087,7 +6141,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     if (UI.reviewSeg === 'due') {
       const up = []; for (let i = 1; i <= 7; i++) { const d = C.addDays(today, i); up.push({ label: fmtDate(d), n: Object.values(S.progress).filter(p => p.introduced_on && WM[p.word_id] && p.next_review_at === d).length }); }
       body = '<div class="card"><div class="col"><div class="row between"><div><div class="sub">오늘 복습할 단어</div><div class="big-num">' + due.length + '</div></div>' + (due.length ? '<span class="tag red">지금 복습</span>' : '<span class="tag">모두 완료</span>') + '</div>' +
-        (due.length ? '<div class="grid2"><button class="btn" data-act="startReview">플래시카드</button><button class="btn soft" data-act="openQuiz" data-src="due">퀴즈</button></div>' : '<p class="sub">오늘 복습할 단어가 없어요. 아래는 앞으로 일주일 일정이에요.</p>') + '</div></div>' +
+        (due.length ? '<button class="btn" data-act="startReview">퀴즈로 복습 (잘 모르는 단어 먼저)</button><div class="grid2"><button class="btn soft" data-act="openQuiz" data-src="due">퀴즈 설정</button><button class="btn ghost" data-act="startFlash">플래시카드</button></div><p class="sub">단어마다 여러 방식의 문제로 물어보고, 틀린 단어는 더 자주 다시 나와요.</p>' : '<p class="sub">오늘 복습할 단어가 없어요. 아래는 앞으로 일주일 일정이에요.</p>') + '</div></div>' +
         '<div class="sectionhead"><h3>앞으로 7일 복습 예정</h3></div><div class="card flat"><div class="list">' + up.map(u => '<div class="li"><span class="grow">' + u.label + '</span><span class="tag ' + (u.n ? '' : 'mute') + '">' + u.n + '개</span></div>').join('') + '</div></div>' +
         (due.length ? '<div class="sectionhead"><h3>복습 목록</h3></div><div class="card flat"><div class="list">' + due.slice(0, 30).map(w => wordRow(w, { hideMeaning: true })).join('') + '</div></div>' : '');
     } else {
@@ -6154,7 +6208,6 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     const sel = (id, k, opts, cur) => '<label class="f">' + k + '<select class="field" id="' + id + '" data-set="' + id + '">' + opts.map(o => '<option value="' + esc(o[0]) + '" ' + (String(o[0]) === String(cur) ? 'selected' : '') + '>' + esc(o[1]) + '</option>').join('') + '</select></label>';
     return sel('goal', '하루 신규 단어 (내일부터 적용)', [5, 10, 15, 20, 30, 40, 50].map(n => [n, n + '개']), s.daily_new_word_goal) +
       sel('level', '현재 레벨', C.LEVELS.map(l => [l, l]), s.current_cefr_level) +
-      sel('mode', '복습 방식', [['flashcard', '플래시카드'], ['quiz', '퀴즈']], s.preferred_learning_mode) +
       '<label class="f">발음 속도 ' + (s.tts_rate || 0.9).toFixed(2) + '배<input type="range" id="rate" data-set="rate" min="0.5" max="1.2" step="0.05" value="' + (s.tts_rate || 0.9) + '"></label>' +
       (its.length ? sel('voice', '음성', [['', '자동 (it-IT)']].concat(its.map(v => [v.name, v.name + ' (' + v.lang + ')'])), s.tts_voice) : '<p class="sub">' + (ttsSupported() ? '이탈리아어(it-IT) 음성을 찾지 못했어요. 기기 설정에서 이탈리아어 음성을 추가하면 발음을 들을 수 있어요.' : '이 브라우저는 음성 재생을 지원하지 않아요.') + '</p>') +
       '<button class="btn ghost small" data-act="speakTest">발음 테스트: Buongiorno</button>' +
@@ -6189,11 +6242,17 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
         '<div class="example"><div class="it">' + esc(w.example_it) + '</div><div class="ko">' + esc(w.example_ko) + '</div></div>' +
         '<div class="row wrap" style="justify-content:center"><button class="btn soft small" data-act="speak" data-text="' + esc(w.word) + '">' + svg('speak', 16) + ' 단어</button><button class="btn soft small" data-act="speak" data-text="' + esc(w.example_it) + '">' + svg('speak', 16) + ' 예문</button><button class="btn ' + (K.repeat ? '' : 'ghost') + ' small" data-act="toggleRepeat" aria-pressed="' + K.repeat + '">' + svg('repeat', 16) + ' 3회 반복</button></div></div>';
     }
-    const rate = K.revealed ? '<div class="rate">' + [['again', '다시 학습'], ['hard', '어려움'], ['normal', '보통'], ['easy', '쉬움']].map(([k, l]) => '<button class="' + k + '" data-act="rate" data-r="' + k + '">' + l + '<small>' + previewDays(w.id, k) + '</small></button>').join('') + '</div>' : '<div style="height:66px"></div>';
+    const study = K.kind !== 'review';
+    const rate = K.revealed && study ? '<div class="rate two"><button class="again" data-act="studyAgain">다시 학습<small>잠시 뒤 또 보여줘요</small></button><button class="normal" data-act="studyNext">다음<small>복습 퀴즈로 평가해요</small></button></div>' : K.revealed ? '<div class="rate">' + [['again', '다시 학습'], ['hard', '어려움'], ['normal', '보통'], ['easy', '쉬움']].map(([k, l]) => '<button class="' + k + '" data-act="rate" data-r="' + k + '">' + l + '<small>' + previewDays(w.id, k) + '</small></button>').join('') + '</div>' : '<div style="height:66px"></div>';
     return topbar + card + rate;
   }
   function vCardsDone() {
-    const K = UI.cards, tot = K.stat.again + K.stat.hard + K.stat.normal + K.stat.easy;
+    const K = UI.cards, tot = K.stat.again + K.stat.hard + K.stat.normal + K.stat.easy, study = K.kind !== 'review';
+    if (study) return '<div class="stripe"></div><div class="card" style="text-align:center"><div class="col" style="align-items:center"><div class="tag">학습 완료</div><div class="big-num">' + K.total + '개</div><p class="sub">' + esc(K.title) + '을(를) 마쳤어요 · 다시 학습 ' + K.stat.again + '번</p></div></div>' +
+      '<p class="sub">얼마나 아는지는 퀴즈로 확인해요. 단어마다 여러 문제로 물어보고, 잘 모르는 단어는 복습에서 더 자주 나와요.</p>' +
+      '<button class="btn" data-act="cardsQuiz">방금 배운 단어 퀴즈로 확인</button>' +
+      (K.kind === 'new' && C.candidatesForNew(S, WORDS, S.daily.newIds).length ? '<button class="btn soft" data-act="extend">새 단어 더 학습하기</button>' : '') +
+      '<button class="btn ghost" data-act="closeCards">홈으로</button>';
     return '<div class="stripe"></div><div class="card" style="text-align:center"><div class="col" style="align-items:center"><div class="tag">학습 완료</div><div class="big-num">' + K.total + '개</div><p class="sub">' + esc(K.title) + '을(를) 마쳤어요</p></div></div>' +
       '<div class="grid2"><div class="stat"><span>다시 학습</span><b>' + K.stat.again + '</b></div><div class="stat"><span>어려움</span><b>' + K.stat.hard + '</b></div><div class="stat"><span>보통</span><b>' + K.stat.normal + '</b></div><div class="stat"><span>쉬움</span><b>' + K.stat.easy + '</b></div></div>' +
       '<button class="btn" data-act="cardsQuiz">방금 배운 단어 퀴즈로 확인</button>' +
@@ -6220,13 +6279,16 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     return learned;
   }
   function openQuiz(src) {
-    UI.qsetup = { src, types: new Set(C.QTYPES), n: 10 }; UI.sheet = { type: 'quizsetup' }; render();
+    UI.qsetup = { src, types: new Set(C.QTYPES), n: 10, per: 3 }; UI.sheet = { type: 'quizsetup' }; render();
   }
-  function startQuiz(words, types, n, title) {
-    const picked = C.pickQuizTargets(words, WORDS, types, n, Math.random, { canSpeak: ttsAvailable() });
+  /* n = 단어 수, opts.per = 단어당 문제 수(기본 1), opts.weak = 잘 모르는 단어부터 고름 */
+  function startQuiz(words, types, n, title, opts) {
+    opts = opts || {}; const per = Math.max(1, Math.min(5, opts.per || 1)), env = { canSpeak: ttsAvailable() };
+    let src = words; if (opts.weak) src = words.slice().sort((a, b) => C.weakScore(S, b, today) - C.weakScore(S, a, today));
+    const picked = C.pickQuizTargets(src, WORDS, types, n, Math.random, Object.assign({ ordered: !!opts.weak }, env));
     if (!picked.length) { toast('시험을 볼 단어가 없어요. 먼저 단어를 학습해 주세요.'); return; }
-    const qs = C.buildQuiz(picked, WORDS, types, Math.random, { canSpeak: ttsAvailable() });
-    UI.quiz = { title, qs, i: 0, picked: null, graded: null, results: [], types, session: C.startSession(S, nowIso()) };
+    const qs = per > 1 ? C.buildQuizMulti(picked, WORDS, types, per, Math.random, env) : C.buildQuiz(picked, WORDS, types, Math.random, env);
+    UI.quiz = { title, qs, i: 0, picked: null, graded: null, results: [], types, per, weak: !!opts.weak, extras: {}, session: C.startSession(S, nowIso()) };
     UI.sheet = null; UI.mode = 'quiz'; commit(); render(); window.scrollTo(0, 0);
     autoSpeakQuestion();
   }
@@ -6256,11 +6318,24 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
   function answerQuiz(answer) {
     const Q = UI.quiz; if (Q.graded) return; const q = Q.qs[Q.i], g = C.gradeAnswer(q, answer);
     Q.graded = g; Q.picked = answer; Q.results.push({ q, answer, g });
-    C.recordQuiz(S, q, answer, g.correct, today, nowIso()); C.sessionTick(Q.session, false, g.correct); commit(); render();
+    C.recordQuiz(S, q, answer, g.correct, today, nowIso(), true); C.sessionTick(Q.session, false, g.correct);
+    /* 틀린 단어는 다른 방식의 문제를 몇 개 더 끼워 넣어 다시 확인 (단어당 최대 2개) */
+    if (!g.correct && (Q.extras[q.wordId] || 0) < 2 && WM[q.wordId]) {
+      const used = Q.qs.filter(x => x.wordId === q.wordId).map(x => x.type), more = C.questionsFor(WM[q.wordId], Q.types.concat(['it2ko', 'ko2it']), 1, WORDS, Math.random, { canSpeak: ttsAvailable() }, used);
+      if (more.length) { Q.extras[q.wordId] = (Q.extras[q.wordId] || 0) + 1; more[0].extra = true; Q.qs.splice(Math.min(Q.qs.length, Q.i + 1 + 3), 0, more[0]); }
+    }
+    commit(); render();
   }
+  /* 단어별 결과로 복습 간격을 한 번씩만 조정 */
+  function settleQuiz() {
+    const Q = UI.quiz; if (!Q || Q.settled) return; Q.settled = true; const by = quizByWord(Q);
+    for (const id of Object.keys(by)) { const r = C.settleWord(S, id, by[id].ok, by[id].n, today, nowIso()); by[id].rating = r && r.rating; }
+    commit();
+  }
+  function quizByWord(Q) { const by = {}; for (const r of Q.results) { const o = by[r.q.wordId] || (by[r.q.wordId] = { ok: 0, n: 0, types: [] }); o.n++; if (r.g.correct) o.ok++; o.types.push(r.q.type); } return by; }
   function nextQuestion() {
     const Q = UI.quiz; Q.i++; Q.graded = null; Q.picked = null; Q.arr = [];
-    if (Q.i >= Q.qs.length) { C.finishSession(Q.session, nowIso()); UI.mode = 'result'; commit(); }
+    if (Q.i >= Q.qs.length) { C.finishSession(Q.session, nowIso()); settleQuiz(); UI.mode = 'result'; commit(); }
     render(); window.scrollTo(0, 0); if (UI.mode === 'quiz') autoSpeakQuestion();
   }
   function vResult() {
@@ -6268,6 +6343,7 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     return '<div class="stripe"></div><div class="card" style="text-align:center"><div class="col" style="align-items:center"><span class="tag ' + (pct >= 80 ? '' : pct >= 50 ? 'sun' : 'red') + '">' + esc(Q.title) + '</span><div class="big-num">' + pct + '%</div><p class="sub">' + n + '문제 중 ' + ok + '개 정답 · ' + wrong.length + '개 오답</p></div></div>' +
       (wrong.length ? '<p class="sub">틀린 단어 ' + wrong.length + '개는 오답 노트에 저장됐어요.</p>' : '<p class="sub">모두 맞혔어요.</p>') +
       '<div class="col">' + (wrong.length ? '<button class="btn" data-act="retryWrong">틀린 단어 재시험 (' + wrong.length + ')</button>' : '') + '<button class="btn ' + (wrong.length ? 'ghost' : '') + '" data-act="restartQuiz">같은 범위로 다시 풀기</button><button class="btn ghost" data-act="closeQuiz">닫기</button></div>' +
+      '<div class="sectionhead"><h3>단어별 이해도</h3></div><div class="card flat"><div class="list">' + Object.entries(quizByWord(Q)).sort((a, b) => a[1].ok / a[1].n - b[1].ok / b[1].n).map(([id, o]) => { const r = o.ok / o.n, lab = r === 1 ? '잘 알아요' : r >= 0.6 ? '보통' : '더 복습해요'; return '<div class="li"><span class="grow"><b>' + esc(WM[id] ? WM[id].word : id) + '</b> <span class="sub">' + esc(WM[id] ? WM[id].meaning_ko : '') + '</span></span><span class="tag ' + (r === 1 ? '' : r >= 0.6 ? 'sun' : 'red') + '">' + o.ok + '/' + o.n + ' · ' + lab + '</span></div>'; }).join('') + '</div></div>' +
       '<div class="sectionhead"><h3>문제별 해설</h3></div><div class="card flat"><div class="list">' + Q.results.map(r => '<div class="li" style="align-items:flex-start"><span class="mkb ' + (r.g.correct ? 'ok' : 'no') + '" aria-label="' + (r.g.correct ? '정답' : '오답') + '">' + (r.g.correct ? '✓' : '✗') + '</span><span class="grow"><b>' + esc(WM[r.q.wordId] ? WM[r.q.wordId].word : r.q.answerLabel) + '</b> <span class="sub">' + QT_KO[r.q.type] + '</span><div class="sub">' + (r.g.correct ? '정답' : '내 답: ' + esc(optionLabel(r) || '(없음)') + ' → 정답: ' + esc(r.g.expected)) + '</div><div class="sub" style="font-style:italic">' + esc(r.q.explanation.split('\n')[1] || '') + '</div></span></div>').join('') + '</div></div>';
   }
   function optionLabel(r) { if (r.q.options) { const o = r.q.options.find(x => x.id === r.answer); return o ? o.label : ''; } return r.answer; }
@@ -6312,7 +6388,8 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     const Z = UI.qsetup, srcs = [['due', '복습 예정'], ['today', '오늘 학습'], ['learned', '전체 학습'], ['wrong', '오답']];
     return '<h3>퀴즈 설정</h3><div class="col"><span class="sub">범위</span><div class="chips">' + srcs.map(([k, l]) => '<button class="chip ' + (Z.src === k ? 'on' : '') + '" data-act="qsrc" data-k="' + k + '">' + l + ' ' + quizTargets(k).length + '</button>').join('') + '</div></div>' +
       '<div class="col"><span class="sub">문제 유형 (여러 개 선택)</span>' + C.QTYPE_GROUPS.map(([gl, ts]) => '<div class="sub" style="margin-top:4px"><b>' + gl + '</b>' + (gl === '문법' ? ' · 해당하는 품사의 단어로 출제돼요' : '') + '</div><div class="chips" style="flex-wrap:wrap">' + ts.map(t => '<button class="chip ' + (Z.types.has(t) ? 'on' : '') + '" data-act="qtype" data-t="' + t + '">' + QT_KO[t] + '</button>').join('') + '</div>').join('') + '<div class="row"><button class="btn ghost small" data-act="qall" data-k="all">전체 선택</button><button class="btn ghost small" data-act="qall" data-k="word">단어만</button><button class="btn ghost small" data-act="qall" data-k="gram">문법만</button></div></div>' +
-      '<div class="col"><span class="sub">문제 수</span><div class="chips">' + [5, 10, 20].map(n => '<button class="chip ' + (Z.n === n ? 'on' : '') + '" data-act="qn" data-n="' + n + '">' + n + '문제</button>').join('') + '</div></div>' +
+      '<div class="col"><span class="sub">단어 수</span><div class="chips">' + [5, 10, 20, 30, 50, 100].map(n => '<button class="chip ' + (Z.n === n ? 'on' : '') + '" data-act="qn" data-n="' + n + '">' + n + '개</button>').join('') + '</div></div>' +
+      '<div class="col"><span class="sub">단어당 문제 수 (여러 방면에서 물어봐요)</span><div class="chips">' + [1, 2, 3, 4, 5].map(n => '<button class="chip ' + (Z.per === n ? 'on' : '') + '" data-act="qper" data-n="' + n + '">' + n + '문제</button>').join('') + '</div><p class="sub">최대 ' + Z.n * Z.per + '문제 · 틀린 단어는 다른 방식 문제가 몇 개 더 나와요.</p></div>' +
       (!ttsAvailable() ? '<p class="sub">이 기기에서는 발음 듣기 문제를 낼 수 없어 자동으로 제외돼요.</p>' : '') + '<button class="btn" data-act="qstart">시작</button>';
   }
 
@@ -6361,16 +6438,19 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     range(d) { UI.statsRange = d.r; render(); },
     startNew() { const ids = pendingNew().map(x => x); if (ids.length) startCards('new', ids, '신규 단어'); else A.extend(); },
     extend() { const add = C.extendToday(S, WORDS, today); commit(); if (!add.length) { toast('더 학습할 새 단어가 없어요.'); render(); return; } startCards('new', add, '신규 단어'); },
-    startReview() { const due = C.getDue(S, WORDS, today); if (!due.length) { toast('지금 복습할 단어가 없어요.'); return; } if (S.settings.preferred_learning_mode === 'quiz' && UI.mode !== 'cards') { startQuiz(due, C.QTYPES, Math.min(20, due.length), '복습'); return; } startCards('review', due.map(w => w.id), '복습'); },
+    startReview() { const due = C.getDue(S, WORDS, today); if (!due.length) { toast('지금 복습할 단어가 없어요.'); return; } startQuiz(due, C.QTYPES, Math.min(30, due.length), '복습', { per: 3, weak: true }); },
+    startFlash() { const due = C.getDue(S, WORDS, today); if (!due.length) { toast('지금 복습할 단어가 없어요.'); return; } startCards('review', due.map(w => w.id), '복습'); },
     startCat(d) { const lv = S.settings.current_cefr_level; const ids = WORDS.filter(w => w.cefr_level === lv && (w.category || []).includes(d.cat) && !(S.progress[w.id] && S.progress[w.id].introduced_on)).slice(0, 10).map(w => w.id); startCards('category', ids, d.cat); },
     reveal() { const K = UI.cards; K.revealed = true; render(); if (S.settings.tts_auto !== false) speak(WM[K.queue[K.idx]].word); },
     rate(d) { rateCard(d.r); },
+    studyNext() { const K = UI.cards, id = K.queue[K.idx]; C.introduce(S, id, today, nowIso()); if (K.studied.indexOf(id) < 0) K.studied.push(id); K.idx++; K.revealed = false; if (K.idx >= K.queue.length) C.finishSession(K.session, nowIso()); commit(); render(); window.scrollTo(0, 0); },
+    studyAgain() { const K = UI.cards, id = K.queue[K.idx]; K.stat.again++; K.requeued[id] = (K.requeued[id] || 0) + 1; if (K.requeued[id] <= 20) K.queue.splice(Math.min(K.queue.length, K.idx + 1 + 3), 0, id); K.idx++; K.revealed = false; render(); window.scrollTo(0, 0); },
     speak(d) { speak(d.text); },
     speak3(d) { speak(d.text, { times: 3 }); },
     speakTest() { speak('Buongiorno'); },
     toggleRepeat() { UI.cards.repeat = !UI.cards.repeat; if (UI.cards.repeat) speak(WM[UI.cards.queue[UI.cards.idx]].word, { times: 3 }); render(); },
     closeCards() { UI.mode = null; UI.cards = null; render(); window.scrollTo(0, 0); },
-    cardsQuiz() { const ids = UI.cards.studied; const ws = ids.map(id => WM[id]).filter(Boolean); UI.cards = null; startQuiz(ws, C.QTYPES, Math.min(ws.length, 20), '학습 확인'); },
+    cardsQuiz() { const ids = UI.cards.studied; const ws = ids.map(id => WM[id]).filter(Boolean); UI.cards = null; startQuiz(ws, C.QTYPES, Math.min(ws.length, 50), '학습 확인', { per: 3 }); },
     openQuiz(d) { openQuiz(d.src); },
     oadd(d) { const Q = UI.quiz; if (Q.graded) return; Q.arr = (Q.arr || []).concat([Number(d.i)]); render(); },
     oundo() { const Q = UI.quiz; if (Q.graded || !Q.arr) return; Q.arr = Q.arr.slice(0, -1); render(); },
@@ -6379,14 +6459,15 @@ function reg(inf, ko, aux, pres, pp, flag){ var o = { inf: inf, ko: ko, aux: aux
     qall(d) { const G = Object.fromEntries(C.QTYPE_GROUPS.map(([l, t]) => [l, t])); UI.qsetup.types = new Set(d.k === 'all' ? C.QTYPES : d.k === 'word' ? G['단어'] : G['문법']); render(); },
     qtype(d) { const s = UI.qsetup.types; if (s.has(d.t)) { if (s.size > 1) s.delete(d.t); } else s.add(d.t); render(); },
     qn(d) { UI.qsetup.n = Number(d.n); render(); },
-    qstart() { const Z = UI.qsetup, ws = quizTargets(Z.src); const names = { due: '복습 퀴즈', today: '오늘 퀴즈', learned: '전체 퀴즈', wrong: '오답 시험' }; startQuiz(ws, [...Z.types], Z.n, names[Z.src]); },
+    qper(d) { UI.qsetup.per = Number(d.n); render(); },
+    qstart() { const Z = UI.qsetup, ws = quizTargets(Z.src); const names = { due: '복습 퀴즈', today: '오늘 퀴즈', learned: '전체 퀴즈', wrong: '오답 시험' }; startQuiz(ws, [...Z.types], Z.n, names[Z.src], { per: Z.per, weak: Z.src !== 'today' }); },
     pick(d) { answerQuiz(d.id); },
     submitText() { const i = $('#qin'); answerQuiz(i ? i.value : ''); },
     ins(d) { const i = $('#qin'); if (i) { const s = i.selectionStart == null ? i.value.length : i.selectionStart; i.value = i.value.slice(0, s) + d.ch + i.value.slice(i.selectionEnd == null ? s : i.selectionEnd); i.focus(); i.setSelectionRange(s + 1, s + 1); } },
     nextQ() { nextQuestion(); },
-    retryWrong() { const Q = UI.quiz; const ids = [...new Set(Q.results.filter(r => !r.g.correct).map(r => r.q.wordId))]; startQuiz(ids.map(id => WM[id]).filter(Boolean), Q.types, ids.length, '틀린 단어 재시험'); },
-    restartQuiz() { const Q = UI.quiz; const ids = [...new Set(Q.qs.map(q => q.wordId))]; startQuiz(ids.map(id => WM[id]).filter(Boolean), Q.types, ids.length, Q.title); },
-    closeQuiz() { UI.mode = null; UI.quiz = null; render(); window.scrollTo(0, 0); },
+    retryWrong() { const Q = UI.quiz; const ids = [...new Set(Q.results.filter(r => !r.g.correct).map(r => r.q.wordId))]; startQuiz(ids.map(id => WM[id]).filter(Boolean), Q.types, ids.length, '틀린 단어 재시험', { per: Math.max(2, Q.per || 1) }); },
+    restartQuiz() { const Q = UI.quiz; const ids = [...new Set(Q.qs.map(q => q.wordId))]; startQuiz(ids.map(id => WM[id]).filter(Boolean), Q.types, ids.length, Q.title, { per: Q.per }); },
+    closeQuiz() { if (UI.quiz && UI.quiz.results.length) settleQuiz(); UI.mode = null; UI.quiz = null; render(); window.scrollTo(0, 0); },
     openWord(d) { UI.sheet = { type: 'word', id: d.id }; render(); },
     closeSheet(d, el, ev) { if (el.dataset.scrim && ev.target !== el) return; closeSheet(); },
     fav(d) { C.toggleFavorite(S, d.id); commit(); render(); },
